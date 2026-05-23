@@ -40,6 +40,31 @@ button {
   background: rgba(244, 209, 138, 0.24);
 }
 
+.music-btn {
+  position: absolute;
+  z-index: 31;
+  right: 22px;
+  top: 22px;
+  min-width: 92px;
+  min-height: 42px;
+  border: 1px solid rgba(255, 247, 236, 0.46);
+  border-radius: 999px;
+  background: rgba(18, 15, 13, 0.58);
+  color: #fff7ec;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+}
+
+.music-btn.on {
+  border-color: rgba(244, 209, 138, 0.78);
+  background: rgba(244, 209, 138, 0.22);
+}
+
+.music-btn:hover {
+  background: rgba(244, 209, 138, 0.28);
+}
+
 .novel-screen,
 .map-screen {
   position: relative;
@@ -160,6 +185,52 @@ button {
   pointer-events: none;
   background: rgba(255, 247, 236, 0.5);
   animation: flash-out 520ms ease forwards;
+}
+
+.node-prelude {
+  position: absolute;
+  z-index: 28;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: #000;
+  color: #fff;
+  cursor: pointer;
+  text-align: center;
+}
+
+.node-prelude p {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", "Microsoft YaHei", serif;
+  font-size: clamp(42px, 9vw, 104px);
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-shadow: 0 0 28px rgba(255, 255, 255, 0.28);
+  animation: prelude-in 900ms ease both;
+}
+
+.node-prelude span {
+  position: absolute;
+  left: 50%;
+  bottom: 18vh;
+  width: min(680px, calc(100vw - 48px));
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.72);
+  font-size: clamp(17px, 2.6vw, 26px);
+  line-height: 1.7;
+  animation: prelude-in 1100ms ease 280ms both;
+}
+
+@keyframes prelude-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes flash-out {
@@ -318,6 +389,28 @@ button {
   border-radius: 28px;
   box-shadow: 0 80px 130px rgba(0, 0, 0, 0.55);
   transition: transform 80ms linear;
+}
+
+.map-world-intro {
+  animation: map-intro-spin 3.4s cubic-bezier(0.2, 0.78, 0.18, 1) both;
+}
+
+@keyframes map-intro-spin {
+  0% {
+    transform: rotateX(62deg) rotateZ(calc(var(--map-rotate-z) - 46deg));
+  }
+
+  38% {
+    transform: rotateX(48deg) rotateZ(calc(var(--map-rotate-z) + 38deg));
+  }
+
+  72% {
+    transform: rotateX(66deg) rotateZ(calc(var(--map-rotate-z) - 18deg));
+  }
+
+  100% {
+    transform: rotateX(var(--map-rotate-x)) rotateZ(var(--map-rotate-z));
+  }
 }
 
 .map-world::after {

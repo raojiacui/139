@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { fetchNpcFollowUp } from './services/aiService';
 import './App.css';
 
@@ -71,6 +71,13 @@ function q(speaker, line, choices) {
     })),
   };
 }
+
+const awakeningScript = [
+  q('gaia', '这一次，你忽然停下。为什么每一轮都从同一个问题开始？', [['因为有人在逼我回答', 'cat'], ['因为我还没有醒来', 'whale'], ['因为答案一直在我身上', 'tree']]),
+  q('lia', '你反问系统：那我是谁？空气安静了。你先看见了什么？', [['一双等我回去的眼睛', 'dog'], ['一片没有出口的水面', 'whale'], ['一条被我反复走过的路', 'bird']]),
+  q('gaia', '如果救世主只是一个名字，你真正想救回什么？', [['那个被我弄丢的人', 'dog'], ['不再逃开的自己', 'cat'], ['心里没有修好的地方', 'tree']]),
+  q('lia', '最后一次回答：你愿意承认自己并不只是来救世界的吗？', [['愿意，我也需要被救', 'tree'], ['我还想先确认真相', 'cat'], ['我听见自己的回声了', 'whale']]),
+];
 
 const identityCreatures = {
   dog: { label: '狗', image: '/identity-dog.png', action: '狗汪汪地跳了起来。' },
@@ -162,6 +169,24 @@ function SnakeGame({ level, onComplete, onBack }) {
     if (direction.x + nextDirection.x === 0 && direction.y + nextDirection.y === 0) return;
     setDirection(nextDirection);
   }
+
+  useEffect(() => {
+    function handleKeyDown(event) {
+      const controls = {
+        ArrowUp: { x: 0, y: -1 },
+        ArrowLeft: { x: -1, y: 0 },
+        ArrowRight: { x: 1, y: 0 },
+        ArrowDown: { x: 0, y: 1 },
+      };
+      const nextDirection = controls[event.key];
+      if (!nextDirection) return;
+      event.preventDefault();
+      turn(nextDirection);
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [direction]);
 
   return (
     <section className="mini-overlay">
@@ -255,6 +280,24 @@ function MazeGame({ level, onComplete, onBack }) {
     }
   }
 
+  useEffect(() => {
+    function handleKeyDown(event) {
+      const controls = {
+        ArrowUp: [0, -1],
+        ArrowLeft: [-1, 0],
+        ArrowRight: [1, 0],
+        ArrowDown: [0, 1],
+      };
+      const direction = controls[event.key];
+      if (!direction) return;
+      event.preventDefault();
+      move(direction[0], direction[1]);
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [player, misses]);
+
   return (
     <section className="mini-overlay">
       <button className="back-btn mini-back-btn" onClick={onBack}>返回</button>
@@ -291,48 +334,43 @@ function evaluateNextLevel(currentLevel, stat) {
   return currentLevel;
 }
 
-function loadSavedProgress() {
-  try {
-    const raw = window.localStorage.getItem(SAVE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
 function App() {
-  const [savedProgress] = useState(() => loadSavedProgress());
-  const [screen, setScreen] = useState(() => savedProgress?.screen || 'intro');
-  const [introIndex, setIntroIndex] = useState(() => savedProgress?.introIndex ?? -1);
-  const [activeNode, setActiveNode] = useState(() => NODES.find((node) => node.id === savedProgress?.activeNodeId) || null);
-  const [stepIndex, setStepIndex] = useState(() => savedProgress?.stepIndex || 0);
-  const [scores, setScores] = useState(() => savedProgress?.scores || defaultScores);
-  const [miniStats, setMiniStats] = useState(() => savedProgress?.miniStats || []);
+  const [screen, setScreen] = useState('intro');
+  const [introIndex, setIntroIndex] = useState(-1);
+  const [activeNode, setActiveNode] = useState(null);
+  const [stepIndex, setStepIndex] = useState(0);
+  const [scores, setScores] = useState(defaultScores);
+  const [miniStats, setMiniStats] = useState([]);
   const [pendingReply, setPendingReply] = useState(null);
   const [pendingScores, setPendingScores] = useState(null);
   const [showMini, setShowMini] = useState(false);
-  const [miniType, setMiniType] = useState(() => (savedProgress?.miniType === 'avoidCracks' ? 'maze' : (MINI_GAMES.includes(savedProgress?.miniType) ? savedProgress.miniType : 'snake')));
-  const [playerLevel, setPlayerLevel] = useState(() => savedProgress?.playerLevel || 0);
-  const [completedNodes, setCompletedNodes] = useState(() => savedProgress?.completedNodes || []);
-  const [ending, setEnding] = useState(() => savedProgress?.ending || null);
-  const [identityMapUnlocked, setIdentityMapUnlocked] = useState(() => savedProgress?.identityMapUnlocked || false);
+  const [miniType, setMiniType] = useState('snake');
+  const [miniPlayedThisNode, setMiniPlayedThisNode] = useState(false);
+  const [nodePrelude, setNodePrelude] = useState(null);
+  const [playerLevel, setPlayerLevel] = useState(0);
+  const [completedNodes, setCompletedNodes] = useState([]);
+  const [ending, setEnding] = useState(null);
+  const [identityMapUnlocked, setIdentityMapUnlocked] = useState(false);
   const [creatureAction, setCreatureAction] = useState(null);
-  const [finale, setFinale] = useState(() => savedProgress?.finale || false);
+  const [finale, setFinale] = useState(false);
   const [transitionKey, setTransitionKey] = useState(0);
   const [customInput, setCustomInput] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
-  const [mapView, setMapView] = useState(() => savedProgress?.mapView || { rotateX: 58, rotateZ: -10 });
+  const [mapView, setMapView] = useState({ rotateX: 58, rotateZ: -10 });
   const [mapDrag, setMapDrag] = useState(null);
   const [historyStack, setHistoryStack] = useState([]);
+  const [musicOn, setMusicOn] = useState(false);
+  const audioRef = useRef(null);
 
-  const script = activeNode ? scripts[activeNode.id] : [];
+  const isAwakeningRound = activeNode && completedNodes.length >= 2 && !completedNodes.includes(activeNode.id);
+  const script = activeNode ? (isAwakeningRound ? awakeningScript : scripts[activeNode.id]) : [];
   const step = script[stepIndex];
   const npc = step ? NPCS[step.speaker] : NPCS.lia;
   const nodeIndex = activeNode ? NODES.findIndex((node) => node.id === activeNode.id) : 0;
   const showIdentityMap = identityMapUnlocked || Boolean(ending);
 
   function snapshot() {
-    return { screen, introIndex, activeNodeId: activeNode?.id || null, stepIndex, scores, miniStats, miniType, playerLevel, completedNodes, ending, identityMapUnlocked, finale, mapView };
+    return { screen, introIndex, activeNodeId: activeNode?.id || null, stepIndex, scores, miniStats, miniType, playerLevel, completedNodes, ending, identityMapUnlocked, finale, mapView, miniPlayedThisNode, nodePrelude, musicOn };
   }
 
   function remember() {
@@ -347,15 +385,20 @@ function App() {
     setScores(s.scores || defaultScores);
     setMiniStats(s.miniStats || []);
     setMiniType(s.miniType || 'snake');
+    setMiniPlayedThisNode(s.miniPlayedThisNode || false);
+    setNodePrelude(s.nodePrelude || null);
     setPlayerLevel(s.playerLevel || 0);
     setCompletedNodes(s.completedNodes || []);
     setEnding(s.ending || null);
     setIdentityMapUnlocked(s.identityMapUnlocked || false);
     setFinale(s.finale || false);
     setMapView(s.mapView || { rotateX: 58, rotateZ: -10 });
+    setMusicOn(s.musicOn || false);
     setPendingReply(null);
     setPendingScores(null);
     setShowMini(false);
+    setMiniPlayedThisNode(false);
+    setNodePrelude(null);
     setCreatureAction(null);
     setCustomInput('');
     setTransitionKey((value) => value + 1);
@@ -381,7 +424,40 @@ function App() {
 
   useEffect(() => {
     window.localStorage.setItem(SAVE_KEY, JSON.stringify(snapshot()));
-  }, [screen, introIndex, activeNode, stepIndex, scores, miniStats, miniType, playerLevel, completedNodes, ending, identityMapUnlocked, finale, mapView]);
+  }, [screen, introIndex, activeNode, stepIndex, scores, miniStats, miniType, playerLevel, completedNodes, ending, identityMapUnlocked, finale, mapView, miniPlayedThisNode, nodePrelude, musicOn]);
+
+  useEffect(() => {
+    const audio = new Audio('/music-night-note.m4a');
+    audio.loop = true;
+    audio.preload = 'auto';
+    audioRef.current = audio;
+
+    return () => {
+      audio.pause();
+      audioRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.volume = 0.42;
+    if (musicOn) {
+      audio.play().catch(() => setMusicOn(false));
+    } else {
+      audio.pause();
+    }
+  }, [musicOn]);
+
+  function MusicToggle() {
+    return (
+      <>
+        <button className={`music-btn ${musicOn ? 'on' : ''}`} onClick={() => setMusicOn((value) => !value)}>
+          {musicOn ? '音乐开' : '音乐关'}
+        </button>
+      </>
+    );
+  }
 
   function advanceIntro() {
     remember();
@@ -393,6 +469,8 @@ function App() {
     remember();
     setActiveNode(node);
     setStepIndex(0);
+    setMiniPlayedThisNode(false);
+    setNodePrelude(completedNodes.length >= 2 ? 'awakening' : 'question');
     setPendingReply(null);
     setPendingScores(null);
     setCustomInput('');
@@ -425,8 +503,9 @@ function App() {
     setScores(nextScores);
     setPendingScores(nextScores);
     setPendingReply(choice.reply);
-    if (Math.random() < 0.32) {
-      setMiniType(MINI_GAMES[(stepIndex + nodeIndex + miniStats.length) % MINI_GAMES.length]);
+    if (!miniPlayedThisNode) {
+      setMiniType(MINI_GAMES[completedNodes.length % MINI_GAMES.length]);
+      setMiniPlayedThisNode(true);
       setShowMini(true);
     }
   }
@@ -478,6 +557,8 @@ function App() {
     setStepIndex(0);
     setScores(defaultScores);
     setMiniStats([]);
+    setMiniPlayedThisNode(false);
+    setNodePrelude(null);
     setPendingReply(null);
     setPendingScores(null);
     setShowMini(false);
@@ -499,11 +580,9 @@ function App() {
       const result = await fetchNpcFollowUp({ nodeId: activeNode.id, stepIndex, userInput: text, npcName: npc.name, conversationHistory: '' });
       setPendingReply(result.npcReply || result.nextQuestion || '你的话让空气安静了一瞬。');
       setPendingScores(scores);
-      window.setTimeout(() => continueAfterReply(miniStats, scores), 1400);
     } catch {
       setPendingReply('......（思绪飘远）');
       setPendingScores(scores);
-      window.setTimeout(() => continueAfterReply(miniStats, scores), 1200);
     }
     setAiLoading(false);
   }
@@ -513,6 +592,7 @@ function App() {
       return (
         <main className="novel-screen start-screen">
           <button className="back-btn" onClick={goBack}>返回</button>
+          <MusicToggle />
           <div className="cover-bg" />
           <section className="start-copy">
             <p>第139次循环</p>
@@ -526,6 +606,7 @@ function App() {
     return (
       <main className="novel-screen intro-screen">
         <button className="back-btn" onClick={goBack}>返回</button>
+        <MusicToggle />
         <div className="cover-bg" />
         <section className="intro-copy" onClick={advanceIntro}>
           <div className="poem-lines">{introLines.map((line) => <p key={line}>{line}</p>)}</div>
@@ -539,6 +620,7 @@ function App() {
     return (
       <main className="novel-screen finale-screen">
         <button className="back-btn" onClick={goBack}>返回</button>
+        <MusicToggle />
         <div className="cover-bg" />
         <section className="finale-copy">
           {finaleDisplayLines.map((line) => <p key={line}>{line}</p>)}
@@ -553,10 +635,11 @@ function App() {
     return (
       <main className={`map-screen ${mapDrag ? 'dragging' : ''}`} onPointerMove={dragMap} onPointerUp={() => setMapDrag(null)} onPointerLeave={() => setMapDrag(null)}>
         <button className="back-btn" onClick={goBack}>返回</button>
+        <MusicToggle />
         <div className="map-sky" />
         <header className="map-title"><p>第139次循环 · 灾难地点</p><h1>循环地图</h1></header>
         <section className="map-viewport" onPointerDown={startMapDrag}>
-          <div className="map-world" style={{ transform: `rotateX(${mapView.rotateX}deg) rotateZ(${mapView.rotateZ}deg)` }}>
+          <div className="map-world map-world-intro" style={{ '--map-rotate-x': `${mapView.rotateX}deg`, '--map-rotate-z': `${mapView.rotateZ}deg`, transform: `rotateX(${mapView.rotateX}deg) rotateZ(${mapView.rotateZ}deg)` }}>
             <div className="map-bg" />
             <div className="map-ridge ridge-back" />
             <div className="map-ridge ridge-left" />
@@ -588,8 +671,15 @@ function App() {
   return (
     <main className={`novel-screen node-screen node-${activeNode.id}`}>
       <button className="back-btn" onClick={goBack}>返回</button>
+      <MusicToggle />
       <div key={transitionKey} className={`scene-bg scene-bg-${activeNode.id}`} />
       <div key={`flash-${transitionKey}`} className="scene-flash" />
+      {nodePrelude && (
+        <section className="node-prelude" onClick={() => setNodePrelude(null)}>
+          <p>你是谁</p>
+          {nodePrelude === 'awakening' && <span>第三次踏入灾难时，你突然意识到：为什么每次都问我这个问题，我不是救世主吗</span>}
+        </section>
+      )}
       <header className="top-pill"><span>{activeNode.title}</span><strong>{Math.min(stepIndex + 1, 4)}/4</strong><span>{activeNode.risk}</span></header>
       <section className="scene-labels"><span>进入地图 → 探索 → 解谜 → 应对灾难</span><strong>{pendingReply ? '记忆正在改写' : 'NPC 对话'}</strong></section>
       <section className={`npc npc-${step.speaker}`}>
@@ -599,7 +689,7 @@ function App() {
         <div>{npc.fallback}</div>
       </section>
       <section className="dialogue"><p>{pendingReply || step.line}</p><small>{pendingReply ? '点击继续' : `${npc.name} 正在等待你的回答。`}</small></section>
-      {!pendingReply && !ending && (
+      {!nodePrelude && !pendingReply && !ending && (
         <section className="question-card">
           <p>{npc.name}</p>
           <h2>{step.line}</h2>
@@ -612,8 +702,8 @@ function App() {
           </div>
         </section>
       )}
-      {pendingReply && !showMini && !ending && <button className="continue-btn" onClick={() => continueAfterReply()}>继续</button>}
-      {showMini && <MiniGame level={playerLevel} gameType={miniType} onComplete={finishMini} onBack={goBack} />}
+      {!nodePrelude && pendingReply && !showMini && !ending && <button className="continue-btn" onClick={() => continueAfterReply()}>继续</button>}
+      {!nodePrelude && showMini && <MiniGame level={playerLevel} gameType={miniType} onComplete={finishMini} onBack={goBack} />}
       {ending && (
         <section className="ending-card">
           <p>第 3 轮 · 身份真相</p>
