@@ -588,7 +588,7 @@ function App() {
   return (
     <main className={`novel-screen node-screen node-${activeNode.id}`}>
       <button className="back-btn" onClick={goBack}>返回</button>
-      <div key={transitionKey} className={`scene-bg scene-bg-${(stepIndex + nodeIndex) % 10}`} />
+      <div key={transitionKey} className={`scene-bg scene-bg-${activeNode.id}`} />
       <div key={`flash-${transitionKey}`} className="scene-flash" />
       <header className="top-pill"><span>{activeNode.title}</span><strong>{Math.min(stepIndex + 1, 4)}/4</strong><span>{activeNode.risk}</span></header>
       <section className="scene-labels"><span>进入地图 → 探索 → 解谜 → 应对灾难</span><strong>{pendingReply ? '记忆正在改写' : 'NPC 对话'}</strong></section>
