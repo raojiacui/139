@@ -3,6 +3,7 @@ import { fetchNpcFollowUp } from './services/aiService';
 import './App.css';
 
 const SAVE_KEY = 'infinite-loop-game-progress-v1';
+const assetUrl = (path) => `${import.meta.env.BASE_URL}${path}`;
 const defaultScores = { dog: 0, cat: 0, whale: 0, tree: 0, bird: 0 };
 
 const NODES = [
@@ -14,8 +15,8 @@ const NODES = [
 ];
 
 const NPCS = {
-  lia: { name: '莉娅', image: '/lia.png', fallback: '莉' },
-  gaia: { name: '盖亚', image: '/gaia.png', fallback: '盖' },
+  lia: { name: '莉娅', image: assetUrl('lia.png'), fallback: '莉' },
+  gaia: { name: '盖亚', image: assetUrl('gaia.png'), fallback: '盖' },
 };
 
 const introLines = [
@@ -80,11 +81,11 @@ const awakeningScript = [
 ];
 
 const identityCreatures = {
-  dog: { label: '狗', image: '/identity-dog.png', action: '狗汪汪地跳了起来。' },
-  cat: { label: '猫', image: '/identity-cat.png', action: '猫喵喵地摇了摇尾巴，在你身边走来走去。' },
-  tree: { label: '树', image: '/identity-tree.jpg', action: '树的枝叶轻轻舒展，像终于扎下了根。' },
-  bird: { label: '鸟', image: '/identity-bird.png', action: '鸟振翅飞翔，掠过河面。' },
-  whale: { label: '鲸鱼', image: '/identity-whale.png', action: '鲸鱼在水光里缓慢游动，发出深处的回响。' },
+  dog: { label: '狗', image: assetUrl('identity-dog.png'), action: '狗汪汪地跳了起来。' },
+  cat: { label: '猫', image: assetUrl('identity-cat.png'), action: '猫喵喵地摇了摇尾巴，在你身边走来走去。' },
+  tree: { label: '树', image: assetUrl('identity-tree.jpg'), action: '树的枝叶轻轻舒展，像终于扎下了根。' },
+  bird: { label: '鸟', image: assetUrl('identity-bird.png'), action: '鸟振翅飞翔，掠过河面。' },
+  whale: { label: '鲸鱼', image: assetUrl('identity-whale.png'), action: '鲸鱼在水光里缓慢游动，发出深处的回响。' },
 };
 
 const finaleDisplayLines = [
@@ -427,7 +428,7 @@ function App() {
   }, [screen, introIndex, activeNode, stepIndex, scores, miniStats, miniType, playerLevel, completedNodes, ending, identityMapUnlocked, finale, mapView, miniPlayedThisNode, nodePrelude, musicOn]);
 
   useEffect(() => {
-    const audio = new Audio('/music-night-note.m4a');
+    const audio = new Audio(assetUrl('music-night-note.m4a'));
     audio.loop = true;
     audio.preload = 'auto';
     audioRef.current = audio;
