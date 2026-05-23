@@ -592,7 +592,12 @@ function App() {
       <div key={`flash-${transitionKey}`} className="scene-flash" />
       <header className="top-pill"><span>{activeNode.title}</span><strong>{Math.min(stepIndex + 1, 4)}/4</strong><span>{activeNode.risk}</span></header>
       <section className="scene-labels"><span>进入地图 → 探索 → 解谜 → 应对灾难</span><strong>{pendingReply ? '记忆正在改写' : 'NPC 对话'}</strong></section>
-      <section className={`npc npc-${step.speaker}`}><img src={npc.image} alt="" onError={(event) => { event.currentTarget.style.display = 'none'; }} /><div>{npc.fallback}</div></section>
+      <section className={`npc npc-${step.speaker}`}>
+        <figure className="npc-cutout">
+          <img src={npc.image} alt="" onError={(event) => { event.currentTarget.style.display = 'none'; }} />
+        </figure>
+        <div>{npc.fallback}</div>
+      </section>
       <section className="dialogue"><p>{pendingReply || step.line}</p><small>{pendingReply ? '点击继续' : `${npc.name} 正在等待你的回答。`}</small></section>
       {!pendingReply && !ending && (
         <section className="question-card">

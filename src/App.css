@@ -727,9 +727,9 @@ button {
 .npc {
   position: absolute;
   z-index: 2;
-  bottom: 230px;
-  width: min(34vw, 360px);
-  height: min(62vh, 620px);
+  bottom: 205px;
+  width: min(36vw, 390px);
+  height: min(68vh, 680px);
   pointer-events: none;
   display: flex;
   align-items: flex-end;
@@ -745,14 +745,50 @@ button {
   right: 4vw;
 }
 
-.npc img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
+.npc-cutout {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 46% 46% 12% 12% / 14% 14% 8% 8%;
+  -webkit-mask-image:
+    radial-gradient(ellipse at 50% 42%, #000 0 58%, transparent 78%),
+    linear-gradient(180deg, #000 0 86%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    radial-gradient(ellipse at 50% 42%, #000 0 58%, transparent 78%),
+    linear-gradient(180deg, #000 0 86%, transparent 100%);
+  mask-composite: intersect;
   filter: drop-shadow(0 24px 44px rgba(0, 0, 0, 0.46));
 }
 
+.npc-cutout::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 42%, transparent 0 58%, rgba(0, 0, 0, 0.16) 72%, transparent 100%);
+}
+
+.npc img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.npc-lia img {
+  object-position: 48% 34%;
+  transform: scale(1.16);
+}
+
+.npc-gaia img {
+  object-position: 52% 20%;
+  transform: scale(1.18);
+}
+
 .npc div {
+  display: none;
   width: 210px;
   height: 330px;
   display: grid;
