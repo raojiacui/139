@@ -371,7 +371,7 @@ function App() {
   const [mapView, setMapView] = useState({ rotateX: 58, rotateZ: -10 });
   const [mapDrag, setMapDrag] = useState(null);
   const [historyStack, setHistoryStack] = useState([]);
-  const [musicOn, setMusicOn] = useState(false);
+  const [musicOn, setMusicOn] = useState(true);
   const [showGuide, setShowGuide] = useState(false);
   const audioRef = useRef(null);
 
@@ -406,7 +406,7 @@ function App() {
     setIdentityMapUnlocked(s.identityMapUnlocked || false);
     setFinale(s.finale || false);
     setMapView(s.mapView || { rotateX: 58, rotateZ: -10 });
-    setMusicOn(s.musicOn || false);
+    setMusicOn(s.musicOn ?? true);
     setPendingReply(null);
     setPendingScores(null);
     setShowMini(false);
@@ -456,7 +456,14 @@ function App() {
     if (!audio) return;
     audio.volume = 0.42;
     if (musicOn) {
-      audio.play().catch(() => setMusicOn(false));
+      const play = () => audio.play().catch(() => {});
+      play();
+      window.addEventListener('pointerdown', play, { once: true });
+      window.addEventListener('keydown', play, { once: true });
+      return () => {
+        window.removeEventListener('pointerdown', play);
+        window.removeEventListener('keydown', play);
+      };
     } else {
       audio.pause();
     }
@@ -584,6 +591,7 @@ function App() {
     setFinale(false);
     setCustomInput('');
     setMapView({ rotateX: 58, rotateZ: -10 });
+    setMusicOn(true);
   }
 
   async function handleCustomAnswer(text) {
