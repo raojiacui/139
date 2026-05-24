@@ -361,6 +361,7 @@ function App() {
   const [mapDrag, setMapDrag] = useState(null);
   const [historyStack, setHistoryStack] = useState([]);
   const [musicOn, setMusicOn] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
   const audioRef = useRef(null);
 
   const isAwakeningRound = activeNode && completedNodes.length >= 2 && !completedNodes.includes(activeNode.id);
@@ -599,8 +600,28 @@ function App() {
             <p>第139次循环</p>
             <h1>第139次崩塌</h1>
             <span>修复灾难地点，在一次次循环里找回真正需要被拯救的人。</span>
-            <button onClick={() => { remember(); setIntroIndex(0); }}>开始游戏</button>
+            <div className="start-actions">
+              <button onClick={() => { remember(); setIntroIndex(0); }}>开始游戏</button>
+              <button className="guide-btn" onClick={() => setShowGuide(true)}>游戏说明</button>
+            </div>
           </section>
+          {showGuide && (
+            <section className="guide-modal" role="dialog" aria-modal="true" aria-label="游戏说明">
+              <div className="guide-card">
+                <button className="guide-close" onClick={() => setShowGuide(false)} aria-label="关闭游戏说明">×</button>
+                <p>游戏说明</p>
+                <h2>轮回修复师行动指引</h2>
+                <ol>
+                  <li>经过首页上的楔子之后会来到循环地图，地图上有5个场景，我们完成三个场景内的闯关即可推理出最终身份，从而结束游戏。</li>
+                  <li>每个场景内有四个问题，每个问题下面会有四个选项，其中三个是固定选项，一个是玩家可自由回复的选项。点击三个固定选项的时候会随机触发小游戏（贪吃蛇、迷宫和古诗填空），玩家若选择了自主回复，向NPC发送消息，NPC也会回答你。</li>
+                  <li>在完成一个场景后会跳转到循环地图，接着你就可以选择下一个场景，直到第三个场景的最后将会推理出你的最终身份。</li>
+                  <li>这个时候又会跳转到循环地图，但是这次不一样的是循环地图的5个场景上都多了相对应的物种标识，点击与你真实身份相同的标识，便会出现收束诗，游戏结束。</li>
+                  <li>游戏音乐可自动开关，AI将结合你的游戏正确率和你选择的回复共同分析推理出你的最终身份。</li>
+                  <li>祝玩家在这趟心灵疗愈里程中找寻到真实自我，一路顺风。</li>
+                </ol>
+              </div>
+            </section>
+          )}
         </main>
       );
     }
