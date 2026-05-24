@@ -456,7 +456,10 @@ function App() {
     if (!audio) return;
     audio.volume = 0.42;
     if (musicOn) {
-      const play = () => audio.play().catch(() => {});
+      const play = (event) => {
+        if (event?.target?.closest?.('.music-btn')) return;
+        audio.play().catch(() => {});
+      };
       play();
       window.addEventListener('pointerdown', play, { once: true });
       window.addEventListener('keydown', play, { once: true });
@@ -472,7 +475,13 @@ function App() {
   function MusicToggle() {
     return (
       <>
-        <button className={`music-btn ${musicOn ? 'on' : ''}`} onClick={() => setMusicOn((value) => !value)}>
+        <button className={`music-btn ${musicOn ? 'on' : ''}`} onPointerDown={(event) => event.stopPropagation()} onClick={() => {
+          setMusicOn((value) => {
+            const next = !value;
+            if (!next) audioRef.current?.pause();
+            return next;
+          });
+        }}>
           {musicOn ? '音乐开' : '音乐关'}
         </button>
       </>
