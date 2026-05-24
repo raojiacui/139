@@ -657,6 +657,7 @@ function App() {
         <div className="cover-bg" />
         <section className="finale-copy">
           {finaleDisplayLines.map((line) => <p key={line}>{line}</p>)}
+          <video className="finale-video" src={assetUrl('finale-video.mp4')} autoPlay muted loop playsInline controls />
           <h1>游戏结束</h1>
           <button className="restart-btn" onClick={restartGame}>回到第139次崩塌</button>
         </section>
