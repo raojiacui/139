@@ -4,6 +4,17 @@ import './App.css';
 
 const SAVE_KEY = 'infinite-loop-game-progress-v1';
 const assetUrl = (path) => `${import.meta.env.BASE_URL}${path}`;
+[
+  ['--scene-default', 'scene1.jpg'],
+  ['--scene-riverbank', 'scene-riverbank.jpg'],
+  ['--scene-woods', 'scene-woods.jpg'],
+  ['--scene-cabin', 'scene-cabin.jpg'],
+  ['--scene-puddle', 'scene-puddle.jpg'],
+  ['--map-bg', 'map-bg.jpg'],
+  ['--cover-bg', 'cover.jpg'],
+].forEach(([name, path]) => {
+  document.documentElement.style.setProperty(name, `url("${assetUrl(path)}")`);
+});
 const defaultScores = { dog: 0, cat: 0, whale: 0, tree: 0, bird: 0 };
 
 const NODES = [
