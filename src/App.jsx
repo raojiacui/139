@@ -611,7 +611,7 @@ function App() {
       setPendingReply(result.npcReply || result.nextQuestion || '你的话让空气安静了一瞬。');
       setPendingScores(scores);
     } catch {
-      setPendingReply('......（思绪飘远）');
+      setPendingReply('风声短暂压过了回音。请再试一次，或换一种说法。');
       setPendingScores(scores);
     }
     setAiLoading(false);
