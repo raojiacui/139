@@ -171,6 +171,25 @@ const EN_UI = {
   returnMap: 'Return to the first map',
   gameOver: 'Game Over',
   restart: 'Return to the 139th Collapse',
+  miniBack: 'Back',
+  miniMeta: 'Emergency Repair Minigame',
+  difficultyLabels: ['Easy', 'Normal', 'Hard'],
+  snakeTitle: 'Snake: Swallow Memory Sparks',
+  snakeHint: (difficulty, targetFood) => `Difficulty: ${difficulty}. Eat ${targetFood} sparks to continue; crashing only resets the snake and counts as a miss.`,
+  up: 'Up',
+  left: 'Left',
+  right: 'Right',
+  down: 'Down',
+  snakeStats: (eaten, targetFood, misses) => `Eaten ${eaten}/${targetFood} - Misses ${misses}`,
+  poemTitle: 'Complete the Poem Line',
+  poemHint: (difficulty) => `Difficulty: ${difficulty}. Choose the most fitting next line.`,
+  previousLine: 'Previous line',
+  misses: (misses) => `Misses ${misses}`,
+  mazeTitle: 'Mist Maze',
+  mazeHint: (difficulty) => `Difficulty: ${difficulty}. Reach the exit from the start; hitting a wall counts as a miss.`,
+  mazeStats: (x, y, misses) => `Position ${x},${y} - Wall hits ${misses}`,
+  preludeTitle: 'Who are you?',
+  preludeAwakening: 'On the third disaster, you suddenly realize: why does every loop ask me the same question? Am I not the savior?',
 };
 const EN_NODES = {
   ruins: { title: 'Ruins', risk: 'Collapse risk' },
@@ -218,6 +237,17 @@ const EN_QUESTIONS = {
     ['This time you can leave the loop. Who will you save first?', [['Myself', 'tree'], ['Still them', 'dog'], ['I do not know', 'cat']]],
   ],
 };
+const EN_AWAKENING = [
+  ['This time you suddenly stop. Why does every loop begin with the same question?', [['Because someone is forcing me to answer', 'cat'], ['Because I have not woken up yet', 'whale'], ['Because the answer has always been inside me', 'tree']]],
+  ['You ask the system back: then who am I? The air goes quiet. What do you see first?', [['A pair of eyes waiting for me', 'dog'], ['A water surface with no exit', 'whale'], ['A road I have walked again and again', 'bird']]],
+  ['If “savior” is only a name, what do you truly want to recover?', [['The person I lost', 'dog'], ['The self that stopped running away', 'cat'], ['The place in my heart still unrepaired', 'tree']]],
+  ['Last answer: are you willing to admit you are not only here to save the world?', [['Yes. I need saving too', 'tree'], ['I still want to confirm the truth', 'cat'], ['I can hear my own echo now', 'whale']]],
+];
+const EN_FINALE_LINES = [
+  'The broken world leans, waiting for life to return.',
+  'You crossed mountains and rivers to break the fog.',
+  'You only wanted to find the one you lost, and still you protected this world.',
+];
 const EN_REPORTS = {
   dog: {
     summary: 'You resemble a dog that cannot accept goodbye. You keep saving others because part of you still believes loss can be rewritten if you are loyal enough.',
@@ -279,13 +309,13 @@ function randomFood(snake, boardSize) {
   return cells[Math.floor(Math.random() * cells.length)] || { x: 0, y: 0 };
 }
 
-function MiniGame({ level, gameType, onComplete, onBack }) {
-  if (gameType === 'poemLine') return <PoemLineGame level={level} onComplete={onComplete} onBack={onBack} />;
-  if (gameType === 'maze') return <MazeGame level={level} onComplete={onComplete} onBack={onBack} />;
-  return <SnakeGame level={level} onComplete={onComplete} onBack={onBack} />;
+function MiniGame({ level, gameType, onComplete, onBack, en }) {
+  if (gameType === 'poemLine') return <PoemLineGame level={level} onComplete={onComplete} onBack={onBack} en={en} />;
+  if (gameType === 'maze') return <MazeGame level={level} onComplete={onComplete} onBack={onBack} en={en} />;
+  return <SnakeGame level={level} onComplete={onComplete} onBack={onBack} en={en} />;
 }
 
-function SnakeGame({ level, onComplete, onBack }) {
+function SnakeGame({ level, onComplete, onBack, en }) {
   const boardSize = 10;
   const targetFood = [2, 3, 4][level];
   const [snake, setSnake] = useState([{ x: 4, y: 5 }, { x: 3, y: 5 }]);
@@ -383,8 +413,15 @@ const POEM_QUESTIONS = [
   { prompt: '沉舟侧畔千帆过', answer: '病树前头万木春', options: ['病树前头万木春', '长风破浪会有时', '直挂云帆济沧海', '映日荷花别样红'] },
 ];
 
-function PoemLineGame({ level, onComplete, onBack }) {
-  const question = useMemo(() => POEM_QUESTIONS[Math.floor(Math.random() * POEM_QUESTIONS.length)], []);
+const EN_POEM_QUESTIONS = [
+  { prompt: 'After the darkest hour', answer: 'the first light returns', options: ['the first light returns', 'the road forgets your name', 'the river locks the door', 'the wind refuses shelter'] },
+  { prompt: 'When memory becomes a maze', answer: 'choose the thread you can still hold', options: ['choose the thread you can still hold', 'run until the map disappears', 'wait for someone else to decide', 'hide the wound under snow'] },
+  { prompt: 'A broken branch can still', answer: 'grow toward the sun', options: ['grow toward the sun', 'sink without a sound', 'erase every footprint', 'borrow another root'] },
+];
+
+function PoemLineGame({ level, onComplete, onBack, en }) {
+  const questions = en ? EN_POEM_QUESTIONS : POEM_QUESTIONS;
+  const question = useMemo(() => questions[Math.floor(Math.random() * questions.length)], [questions]);
   const options = useMemo(() => question.options.slice(0, [2, 3, 4][level]), [level, question]);
   const [misses, setMisses] = useState(0);
   const [startedAt] = useState(() => performance.now());
@@ -396,6 +433,23 @@ function PoemLineGame({ level, onComplete, onBack }) {
       const time = Math.max(1, Math.round((performance.now() - startedAt) / 1000));
       window.setTimeout(() => onComplete({ gameType: 'poemLine', level, success: correct, time, misses: nextMisses }), 220);
     } else setMisses(nextMisses);
+  }
+
+  if (en) {
+    const difficulty = en.difficultyLabels[level];
+    return (
+      <section className="mini-overlay">
+        <button className="back-btn mini-back-btn" onClick={onBack}>{en.miniBack}</button>
+        <div className="mini-card">
+          <p>{en.miniMeta}</p>
+          <h2>{en.poemTitle}</h2>
+          <span>{en.poemHint(difficulty)}</span>
+          <div className="poem-prompt"><small>{en.previousLine}</small><strong>{question.prompt}</strong></div>
+          <div className="poem-options">{options.map((line) => <button key={line} onClick={() => choose(line)}>{line}</button>)}</div>
+          <small>{en.misses(misses)}</small>
+        </div>
+      </section>
+    );
   }
 
   return (
@@ -419,7 +473,7 @@ const MAZE_LAYOUTS = [
   ['S..#...', '##.#.#.', '...#.#.', '.###.#.', '.#...#.', '.#.###.', '...#..E'],
 ];
 
-function MazeGame({ level, onComplete, onBack }) {
+function MazeGame({ level, onComplete, onBack, en }) {
   const layout = MAZE_LAYOUTS[level];
   const size = layout.length;
   const [player, setPlayer] = useState({ x: 0, y: 0 });
@@ -477,6 +531,171 @@ function MazeGame({ level, onComplete, onBack }) {
           <button onClick={() => move(0, 1)}>下</button>
         </div>
         <small>位置 {player.x + 1},{player.y + 1} · 撞墙 {misses}</small>
+      </div>
+    </section>
+  );
+}
+
+function EnglishMiniGame({ level, gameType, onComplete, onBack, en }) {
+  if (gameType === 'poemLine') return <PoemLineGame level={level} onComplete={onComplete} onBack={onBack} en={en} />;
+  if (gameType === 'maze') return <EnglishMazeGame level={level} onComplete={onComplete} onBack={onBack} en={en} />;
+  return <EnglishSnakeGame level={level} onComplete={onComplete} onBack={onBack} en={en} />;
+}
+
+function EnglishSnakeGame({ level, onComplete, onBack, en }) {
+  const boardSize = 10;
+  const targetFood = [2, 3, 4][level];
+  const [snake, setSnake] = useState([{ x: 4, y: 5 }, { x: 3, y: 5 }]);
+  const [food, setFood] = useState({ x: 7, y: 5 });
+  const [direction, setDirection] = useState({ x: 1, y: 0 });
+  const [eaten, setEaten] = useState(0);
+  const [misses, setMisses] = useState(0);
+  const [finished, setFinished] = useState(false);
+  const [startedAt] = useState(() => performance.now());
+
+  useEffect(() => {
+    if (finished) return undefined;
+    const timer = window.setInterval(() => {
+      setSnake((current) => {
+        const next = { x: current[0].x + direction.x, y: current[0].y + direction.y };
+        const crashed = next.x < 0 || next.y < 0 || next.x >= boardSize || next.y >= boardSize || current.some((part) => part.x === next.x && part.y === next.y);
+        if (crashed) {
+          setMisses((value) => value + 1);
+          return [{ x: 4, y: 5 }, { x: 3, y: 5 }];
+        }
+        const nextSnake = [next, ...current];
+        if (next.x === food.x && next.y === food.y) {
+          const nextEaten = eaten + 1;
+          setEaten(nextEaten);
+          setFood(randomFood(nextSnake, boardSize));
+          if (nextEaten >= targetFood) {
+            setFinished(true);
+            const time = Math.max(1, Math.round((performance.now() - startedAt) / 1000));
+            window.setTimeout(() => onComplete({ gameType: 'snake', level, success: true, time, misses }), 180);
+          }
+          return nextSnake;
+        }
+        nextSnake.pop();
+        return nextSnake;
+      });
+    }, [520, 420, 330][level]);
+    return () => window.clearInterval(timer);
+  }, [direction, eaten, finished, food, level, misses, onComplete, startedAt]);
+
+  function turn(nextDirection) {
+    if (direction.x + nextDirection.x === 0 && direction.y + nextDirection.y === 0) return;
+    setDirection(nextDirection);
+  }
+
+  useEffect(() => {
+    function handleKeyDown(event) {
+      const controls = {
+        ArrowUp: { x: 0, y: -1 },
+        ArrowLeft: { x: -1, y: 0 },
+        ArrowRight: { x: 1, y: 0 },
+        ArrowDown: { x: 0, y: 1 },
+      };
+      const nextDirection = controls[event.key];
+      if (!nextDirection) return;
+      event.preventDefault();
+      turn(nextDirection);
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [direction]);
+
+  const difficulty = en.difficultyLabels[level];
+
+  return (
+    <section className="mini-overlay">
+      <button className="back-btn mini-back-btn" onClick={onBack}>{en.miniBack}</button>
+      <div className="mini-card">
+        <p>{en.miniMeta}</p>
+        <h2>{en.snakeTitle}</h2>
+        <span>{en.snakeHint(difficulty, targetFood)}</span>
+        <div className="snake-board" style={{ gridTemplateColumns: `repeat(${boardSize}, 1fr)` }}>
+          {Array.from({ length: boardSize * boardSize }, (_, index) => {
+            const x = index % boardSize;
+            const y = Math.floor(index / boardSize);
+            const isSnake = snake.some((part) => part.x === x && part.y === y);
+            const isHead = snake[0].x === x && snake[0].y === y;
+            const isFood = food.x === x && food.y === y;
+            return <span key={index} className={`${isSnake ? 'snake-cell' : ''} ${isHead ? 'snake-head' : ''} ${isFood ? 'snake-food' : ''}`} />;
+          })}
+        </div>
+        <div className="snake-controls">
+          <button onClick={() => turn({ x: 0, y: -1 })}>{en.up}</button>
+          <button onClick={() => turn({ x: -1, y: 0 })}>{en.left}</button>
+          <button onClick={() => turn({ x: 1, y: 0 })}>{en.right}</button>
+          <button onClick={() => turn({ x: 0, y: 1 })}>{en.down}</button>
+        </div>
+        <small>{en.snakeStats(eaten, targetFood, misses)}</small>
+      </div>
+    </section>
+  );
+}
+
+function EnglishMazeGame({ level, onComplete, onBack, en }) {
+  const layout = MAZE_LAYOUTS[level];
+  const size = layout.length;
+  const [player, setPlayer] = useState({ x: 0, y: 0 });
+  const [misses, setMisses] = useState(0);
+  const [startedAt] = useState(() => performance.now());
+
+  function move(dx, dy) {
+    const next = { x: player.x + dx, y: player.y + dy };
+    const cell = layout[next.y]?.[next.x];
+    if (!cell || cell === '#') {
+      setMisses((value) => value + 1);
+      return;
+    }
+    setPlayer(next);
+    if (cell === 'E') {
+      const time = Math.max(1, Math.round((performance.now() - startedAt) / 1000));
+      window.setTimeout(() => onComplete({ gameType: 'maze', level, success: true, time, misses }), 220);
+    }
+  }
+
+  useEffect(() => {
+    function handleKeyDown(event) {
+      const controls = {
+        ArrowUp: [0, -1],
+        ArrowLeft: [-1, 0],
+        ArrowRight: [1, 0],
+        ArrowDown: [0, 1],
+      };
+      const direction = controls[event.key];
+      if (!direction) return;
+      event.preventDefault();
+      move(direction[0], direction[1]);
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [player, misses]);
+
+  const difficulty = en.difficultyLabels[level];
+
+  return (
+    <section className="mini-overlay">
+      <button className="back-btn mini-back-btn" onClick={onBack}>{en.miniBack}</button>
+      <div className="mini-card">
+        <p>{en.miniMeta}</p>
+        <h2>{en.mazeTitle}</h2>
+        <span>{en.mazeHint(difficulty)}</span>
+        <div className="maze-board" style={{ gridTemplateColumns: `repeat(${size}, 1fr)` }}>
+          {layout.flatMap((row, y) => row.split('').map((cell, x) => (
+            <span key={`${x}-${y}`} className={`${cell === '#' ? 'maze-wall' : ''} ${cell === 'E' ? 'maze-exit' : ''} ${player.x === x && player.y === y ? 'maze-player' : ''}`} />
+          )))}
+        </div>
+        <div className="maze-controls">
+          <button onClick={() => move(0, -1)}>{en.up}</button>
+          <button onClick={() => move(-1, 0)}>{en.left}</button>
+          <button onClick={() => move(1, 0)}>{en.right}</button>
+          <button onClick={() => move(0, 1)}>{en.down}</button>
+        </div>
+        <small>{en.mazeStats(player.x + 1, player.y + 1, misses)}</small>
       </div>
     </section>
   );
@@ -669,11 +888,21 @@ function App() {
 
   const isAwakeningRound = activeNode && completedNodes.length >= 2 && !completedNodes.includes(activeNode.id);
   const script = activeNode ? (isAwakeningRound ? awakeningScript : scripts[activeNode.id]) : [];
-  const step = script[stepIndex];
+  const baseStep = script[stepIndex];
+  const englishQuestion = activeNode ? (isAwakeningRound ? EN_AWAKENING : EN_QUESTIONS[activeNode.id])?.[stepIndex] : null;
+  const step = isEnglish && englishQuestion ? {
+    speaker: baseStep.speaker,
+    line: englishQuestion[0],
+    choices: englishQuestion[1].map(([text, identity]) => ({
+      text,
+      identity,
+      reply: `${baseStep.speaker === 'lia' ? 'Lia' : 'Gaia'} remembers what you chose.`,
+    })),
+  } : baseStep;
   const npc = step ? NPCS[step.speaker] : NPCS.lia;
   const nodeIndex = activeNode ? NODES.findIndex((node) => node.id === activeNode.id) : 0;
   const showIdentityMap = identityMapUnlocked || Boolean(ending);
-  const endingReport = ending ? (ending.report || getEndingReport(ending.identity)) : null;
+  const endingReport = ending ? (isEnglish ? EN_REPORTS[ending.identity] : (ending.report || getEndingReport(ending.identity))) : null;
 
   function snapshot() {
     return { screen, introIndex, activeNodeId: activeNode?.id || null, stepIndex, scores, miniStats, miniType, playerLevel, completedNodes, ending, identityMapUnlocked, finale, mapView, miniPlayedThisNode, nodePrelude, musicOn };
@@ -799,7 +1028,7 @@ function App() {
             return next;
           });
         }}>
-          {musicOn ? '音乐开' : '音乐关'}
+          {isEnglish ? (musicOn ? en.musicOn : en.musicOff) : (musicOn ? '音乐开' : '音乐关')}
         </button>
       </>
     );
@@ -933,17 +1162,13 @@ function App() {
     setAiLoading(true);
     try {
       const result = await fetchNpcFollowUp({ nodeId: activeNode.id, stepIndex, userInput: text, npcName: npc.name, conversationHistory: '' });
-      setPendingReply(result.npcReply || result.nextQuestion || '你的话让空气安静了一瞬。');
+      setPendingReply(result.npcReply || result.nextQuestion || (isEnglish ? 'Your words leave the air quiet for a moment.' : '你的话让空气安静了一瞬。'));
       setPendingScores(scores);
     } catch {
-      setPendingReply('风声短暂压过了回音。请再试一次，或换一种说法。');
+      setPendingReply(isEnglish ? 'The wind briefly drowns out the echo. Try again, or say it another way.' : '风声短暂压过了回音。请再试一次，或换一种说法。');
       setPendingScores(scores);
     }
     setAiLoading(false);
-  }
-
-  if (isEnglish) {
-    return <EnglishGame onLanguageToggle={() => setLanguage('zh')} />;
   }
 
   if (screen === 'intro') {
@@ -968,16 +1193,18 @@ function App() {
           {showGuide && (
             <section className="guide-modal" role="dialog" aria-modal="true" aria-label="游戏说明">
               <div className="guide-card">
-                <button className="guide-close" onClick={() => setShowGuide(false)} aria-label="关闭游戏说明">×</button>
-                <p>游戏说明</p>
-                <h2>轮回修复师行动指引</h2>
+                <button className="guide-close" onClick={() => setShowGuide(false)} aria-label={isEnglish ? 'Close guide' : '关闭游戏说明'}>×</button>
+                <p>{isEnglish ? en.guide : '游戏说明'}</p>
+                <h2>{isEnglish ? en.guideTitle : '轮回修复师行动指引'}</h2>
                 <ol>
-                  <li>经过首页上的楔子之后会来到循环地图，地图上有5个场景，我们完成三个场景内的闯关即可推理出最终身份，从而结束游戏。</li>
-                  <li>每个场景内有四个问题，每个问题下面会有四个选项，其中三个是固定选项，一个是玩家可自由回复的选项。点击三个固定选项的时候会随机触发小游戏（贪吃蛇、迷宫和古诗填空），玩家若选择了自主回复，向NPC发送消息，NPC也会回答你。</li>
-                  <li>在完成一个场景后会跳转到循环地图，接着你就可以选择下一个场景，直到第三个场景的最后将会推理出你的最终身份。</li>
-                  <li>这个时候又会跳转到循环地图，但是这次不一样的是循环地图的5个场景上都多了相对应的物种标识，点击与你真实身份相同的标识，便会出现收束诗，游戏结束。</li>
-                  <li>游戏音乐可自动开关，AI将结合你的游戏正确率和你选择的回复共同分析推理出你的最终身份。</li>
-                  <li>祝玩家在这趟心灵疗愈里程中找寻到真实自我，一路顺风。</li>
+                  {(isEnglish ? en.guideItems : [
+                    '经过首页上的楔子之后会来到循环地图，地图上有5个场景，我们完成三个场景内的闯关即可推理出最终身份，从而结束游戏。',
+                    '每个场景内有四个问题，每个问题下面会有四个选项，其中三个是固定选项，一个是玩家可自由回复的选项。点击三个固定选项的时候会随机触发小游戏（贪吃蛇、迷宫和古诗填空），玩家若选择了自主回复，向NPC发送消息，NPC也会回答你。',
+                    '在完成一个场景后会跳转到循环地图，接着你就可以选择下一个场景，直到第三个场景的最后将会推理出你的最终身份。',
+                    '这个时候又会跳转到循环地图，但是这次不一样的是循环地图的5个场景上都多了相对应的物种标识，点击与你真实身份相同的标识，便会出现收束诗，游戏结束。',
+                    '游戏音乐可自动开关，AI将结合你的游戏正确率和你选择的回复共同分析推理出你的最终身份。',
+                    '祝玩家在这趟心灵疗愈里程中找寻到真实自我，一路顺风。',
+                  ]).map((item) => <li key={item}>{item}</li>)}
                 </ol>
               </div>
             </section>
@@ -993,8 +1220,8 @@ function App() {
           <LanguageToggle />
           <div className="cover-bg" />
         <section className="intro-copy" onClick={advanceIntro}>
-          <div className="poem-lines">{introLines.map((line) => <p key={line}>{line}</p>)}</div>
-          <small>点击进入循环地图</small>
+          <div className="poem-lines">{(isEnglish ? en.introLines : introLines).map((line) => <p key={line}>{line}</p>)}</div>
+          <small>{isEnglish ? en.enterMap : '点击进入循环地图'}</small>
         </section>
       </main>
     );
@@ -1009,10 +1236,10 @@ function App() {
         <LanguageToggle />
         <div className="cover-bg" />
         <section className="finale-copy">
-          {finaleDisplayLines.map((line) => <p key={line}>{line}</p>)}
+          {(isEnglish ? EN_FINALE_LINES : finaleDisplayLines).map((line) => <p key={line}>{line}</p>)}
           <video className="finale-video" src={assetUrl('finale-video.mp4')} autoPlay muted loop playsInline controls />
-          <h1>游戏结束</h1>
-          <button className="restart-btn" onClick={restartGame}>回到第139次崩塌</button>
+          <h1>{isEnglish ? en.gameOver : '游戏结束'}</h1>
+          <button className="restart-btn" onClick={restartGame}>{isEnglish ? en.restart : '回到第139次崩塌'}</button>
         </section>
       </main>
     );
@@ -1026,7 +1253,7 @@ function App() {
         <MusicToggle />
         <LanguageToggle />
         <div className="map-sky" />
-        <header className="map-title"><p>第139次循环 · 灾难地点</p><h1>循环地图</h1></header>
+        <header className="map-title"><p>{isEnglish ? en.mapMeta : '第139次循环 · 灾难地点'}</p><h1>{isEnglish ? en.mapTitle : '循环地图'}</h1></header>
         <section className="map-viewport" onPointerDown={startMapDrag}>
           <div className="map-world map-world-intro" style={{ '--map-rotate-x': `${mapView.rotateX}deg`, '--map-rotate-z': `${mapView.rotateZ}deg`, transform: `rotateX(${mapView.rotateX}deg) rotateZ(${mapView.rotateZ}deg)` }}>
             <div className="map-bg" />
@@ -1038,7 +1265,7 @@ function App() {
             <svg className="river" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M4 72 C 22 35, 36 82, 51 52 S 77 21, 96 57" /></svg>
             {showIdentityMap ? NODES.map((node, index) => {
               const identity = ['dog', 'cat', 'tree', 'bird', 'whale'][index];
-              const creature = identityCreatures[identity];
+              const creature = isEnglish ? { ...identityCreatures[identity], ...EN_CREATURES[identity] } : identityCreatures[identity];
               return (
                 <button key={identity} className={`map-creature creature-${identity} ${creatureAction === identity ? 'active' : ''}`} style={{ left: `${node.x}%`, top: `${node.y}%` }} onPointerDown={(event) => event.stopPropagation()} onClick={() => confirmCreature(identity)}>
                   <img src={creature.image} alt={creature.label} />
@@ -1047,12 +1274,12 @@ function App() {
               );
             }) : NODES.map((node, index) => (
               <button key={node.id} className={`map-node ${completedNodes.includes(node.id) ? 'done' : ''}`} style={{ left: `${node.x}%`, top: `${node.y}%` }} onPointerDown={(event) => event.stopPropagation()} onClick={() => enterNode(node)}>
-                <i>{index + 1}</i><span>{node.icon}</span><b>{node.title}</b><small>{node.risk}</small>
+                <i>{index + 1}</i><span>{node.icon}</span><b>{isEnglish ? EN_NODES[node.id].title : node.title}</b><small>{isEnglish ? EN_NODES[node.id].risk : node.risk}</small>
               </button>
             ))}
           </div>
         </section>
-        {showIdentityMap && <section className="identity-map-panel"><p>身份推理完成</p><h2>在地图上找到真正的自己</h2><span>{creatureAction ? identityCreatures[creatureAction].action : '点击与你刚才身份相符的物种。'}</span></section>}
+        {showIdentityMap && <section className="identity-map-panel"><p>{isEnglish ? en.identityDone : '身份推理完成'}</p><h2>{isEnglish ? en.findSelf : '在地图上找到真正的自己'}</h2><span>{creatureAction ? (isEnglish ? EN_CREATURES[creatureAction].action : identityCreatures[creatureAction].action) : (isEnglish ? en.chooseCreature : '点击与你刚才身份相符的物种。')}</span></section>}
       </main>
     );
   }
@@ -1067,19 +1294,19 @@ function App() {
       <div key={`flash-${transitionKey}`} className="scene-flash" />
       {nodePrelude && (
         <section className="node-prelude" onClick={() => setNodePrelude(null)}>
-          <p>你是谁</p>
-          {nodePrelude === 'awakening' && <span>第三次踏入灾难时，你突然意识到：为什么每次都问我这个问题，我不是救世主吗</span>}
+          <p>{isEnglish ? en.preludeTitle : '你是谁'}</p>
+          {nodePrelude === 'awakening' && <span>{isEnglish ? en.preludeAwakening : '第三次踏入灾难时，你突然意识到：为什么每次都问我这个问题，我不是救世主吗'}</span>}
         </section>
       )}
-      <header className="top-pill"><span>{activeNode.title}</span><strong>{Math.min(stepIndex + 1, 4)}/4</strong><span>{activeNode.risk}</span></header>
-      <section className="scene-labels"><span>进入地图 → 探索 → 解谜 → 应对灾难</span><strong>{pendingReply ? '记忆正在改写' : 'NPC 对话'}</strong></section>
+      <header className="top-pill"><span>{isEnglish ? EN_NODES[activeNode.id].title : activeNode.title}</span><strong>{Math.min(stepIndex + 1, 4)}/4</strong><span>{isEnglish ? EN_NODES[activeNode.id].risk : activeNode.risk}</span></header>
+      <section className="scene-labels"><span>{isEnglish ? en.route : '进入地图 → 探索 → 解谜 → 应对灾难'}</span><strong>{pendingReply ? (isEnglish ? en.rewriting : '记忆正在改写') : (isEnglish ? en.npcTalk : 'NPC 对话')}</strong></section>
       <section className={`npc npc-${step.speaker}`}>
         <figure className="npc-cutout">
           <img src={npc.image} alt="" onError={(event) => { event.currentTarget.style.display = 'none'; }} />
         </figure>
         <div>{npc.fallback}</div>
       </section>
-      <section className="dialogue"><p>{pendingReply || step.line}</p><small>{pendingReply ? '点击继续' : `${npc.name} 正在等待你的回答。`}</small></section>
+      <section className="dialogue"><p>{pendingReply || step.line}</p><small>{pendingReply ? (isEnglish ? en.clickContinue : '点击继续') : `${isEnglish ? (step.speaker === 'lia' ? 'Lia' : 'Gaia') : npc.name} ${isEnglish ? en.waiting : '正在等待你的回答。'}`}</small></section>
       {!nodePrelude && !pendingReply && !ending && (
         <section className="question-card">
           <p>{npc.name}</p>
@@ -1087,39 +1314,39 @@ function App() {
           <div className="choice-list">
             {step.choices.map((choice) => <button key={choice.text} onClick={() => chooseOption(choice)}>{choice.text}</button>)}
             <form className="custom-choice" onSubmit={(event) => { event.preventDefault(); if (customInput.trim() && !aiLoading) { handleCustomAnswer(customInput.trim()); setCustomInput(''); } }}>
-              <input type="text" placeholder={aiLoading ? 'NPC 正在回应...' : '输入你的回答'} value={customInput} onChange={(event) => setCustomInput(event.target.value)} disabled={aiLoading} />
-              <button type="submit" disabled={!customInput.trim() || aiLoading}>发送</button>
+              <input type="text" placeholder={aiLoading ? (isEnglish ? en.inputLoading : 'NPC 正在回应...') : (isEnglish ? en.inputPlaceholder : '输入你的回答')} value={customInput} onChange={(event) => setCustomInput(event.target.value)} disabled={aiLoading} />
+              <button type="submit" disabled={!customInput.trim() || aiLoading}>{isEnglish ? en.send : '发送'}</button>
             </form>
           </div>
         </section>
       )}
-      {!nodePrelude && pendingReply && !showMini && !ending && <button className="continue-btn" onClick={() => continueAfterReply()}>继续</button>}
-      {!nodePrelude && showMini && <MiniGame level={playerLevel} gameType={miniType} onComplete={finishMini} onBack={goBack} />}
+      {!nodePrelude && pendingReply && !showMini && !ending && <button className="continue-btn" onClick={() => continueAfterReply()}>{isEnglish ? en.continue : '继续'}</button>}
+      {!nodePrelude && showMini && (isEnglish ? <EnglishMiniGame level={playerLevel} gameType={miniType} onComplete={finishMini} onBack={goBack} en={en} /> : <MiniGame level={playerLevel} gameType={miniType} onComplete={finishMini} onBack={goBack} />)}
       {ending && (
         <section className="ending-card">
-          <p>第 3 轮 · 身份真相</p>
-          <h2>水坑倒影：{identityCreatures[ending.identity].label}</h2>
+          <p>{isEnglish ? en.endingMeta : '第 3 轮 · 身份真相'}</p>
+          <h2>{isEnglish ? en.endingTitlePrefix : '水坑倒影：'}{isEnglish ? EN_CREATURES[ending.identity].label : identityCreatures[ending.identity].label}</h2>
           <span className="ending-summary">{endingReport.summary}</span>
           <div className="analysis-grid">
             <article>
-              <b>当下心理状态</b>
+              <b>{isEnglish ? en.state : '当下心理状态'}</b>
               <span>{endingReport.state}</span>
             </article>
             <article>
-              <b>行为模式</b>
+              <b>{isEnglish ? en.pattern : '行为模式'}</b>
               <span>{endingReport.pattern}</span>
             </article>
             <article>
-              <b>突破方向</b>
+              <b>{isEnglish ? en.breakthrough : '突破方向'}</b>
               <span>{endingReport.breakthrough}</span>
             </article>
             <article>
-              <b>7 日行动建议</b>
+              <b>{isEnglish ? en.practice : '7 日行动建议'}</b>
               <span>{endingReport.practice}</span>
             </article>
           </div>
-          <span className="ending-note">这不是临床诊断，而是一份基于你在循环中的选择生成的心理画像。你修复的不是外部真实世界，而是自己的内心世界。</span>
-          <button className="identity-return-btn" onClick={returnToIdentityMap}>回到最初地图</button>
+          <span className="ending-note">{isEnglish ? en.endingNote : '这不是临床诊断，而是一份基于你在循环中的选择生成的心理画像。你修复的不是外部真实世界，而是自己的内心世界。'}</span>
+          <button className="identity-return-btn" onClick={returnToIdentityMap}>{isEnglish ? en.returnMap : '回到最初地图'}</button>
         </section>
       )}
     </main>
