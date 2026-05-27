@@ -6,10 +6,6 @@
 
 https://gm.yangtzeu.work
 
-备用链接：
-
-https://raojiacui.github.io/139/?v=58fa258
-
 建议使用 Chrome 浏览器或手机浏览器打开。若页面显示异常，可先刷新一次页面。
 
 ## 二、演示目标
