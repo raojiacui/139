@@ -84,12 +84,12 @@ function q(speaker, line, choices) {
   };
 }
 
-function LandscapeNotice() {
+function LandscapeNotice({ show }) {
   return (
-    <aside className="landscape-notice" aria-hidden="true">
+    <aside className={`landscape-notice ${show ? 'show' : ''}`} aria-hidden={!show}>
       <div>
         <p>请横屏体验</p>
-        <span>将手机旋转为横屏后继续游戏</span>
+        <span>将手机旋转为横屏后继续游戏。如果没有旋转，请关闭手机的竖排方向锁定。</span>
       </div>
     </aside>
   );
@@ -384,6 +384,7 @@ function App() {
   const [historyStack, setHistoryStack] = useState([]);
   const [musicOn, setMusicOn] = useState(true);
   const [showGuide, setShowGuide] = useState(false);
+  const [showLandscapeNotice, setShowLandscapeNotice] = useState(false);
   const audioRef = useRef(null);
 
   const isAwakeningRound = activeNode && completedNodes.length >= 2 && !completedNodes.includes(activeNode.id);
@@ -446,6 +447,26 @@ function App() {
       return stack;
     });
   }
+
+  useEffect(() => {
+    function updateOrientationNotice() {
+      const viewport = window.visualViewport;
+      const width = viewport?.width || window.innerWidth;
+      const height = viewport?.height || window.innerHeight;
+      const likelyPhone = Math.min(width, height) <= 820;
+      setShowLandscapeNotice(likelyPhone && height > width);
+    }
+
+    updateOrientationNotice();
+    window.addEventListener('resize', updateOrientationNotice);
+    window.addEventListener('orientationchange', updateOrientationNotice);
+    window.visualViewport?.addEventListener('resize', updateOrientationNotice);
+    return () => {
+      window.removeEventListener('resize', updateOrientationNotice);
+      window.removeEventListener('orientationchange', updateOrientationNotice);
+      window.visualViewport?.removeEventListener('resize', updateOrientationNotice);
+    };
+  }, []);
 
   useEffect(() => {
     window.localStorage.setItem(SAVE_KEY, JSON.stringify(snapshot()));
@@ -633,7 +654,7 @@ function App() {
     if (introIndex === -1) {
       return (
         <main className="novel-screen start-screen">
-          <LandscapeNotice />
+          <LandscapeNotice show={showLandscapeNotice} />
           <button className="back-btn" onClick={goBack}>返回</button>
           <MusicToggle />
           <div className="cover-bg" />
@@ -668,7 +689,7 @@ function App() {
     }
     return (
       <main className="novel-screen intro-screen">
-        <LandscapeNotice />
+        <LandscapeNotice show={showLandscapeNotice} />
         <button className="back-btn" onClick={goBack}>返回</button>
         <MusicToggle />
         <div className="cover-bg" />
@@ -683,7 +704,7 @@ function App() {
   if (finale) {
     return (
       <main className="novel-screen finale-screen">
-        <LandscapeNotice />
+        <LandscapeNotice show={showLandscapeNotice} />
         <button className="back-btn" onClick={goBack}>返回</button>
         <MusicToggle />
         <div className="cover-bg" />
@@ -700,7 +721,7 @@ function App() {
   if (screen === 'map') {
     return (
       <main className={`map-screen ${mapDrag ? 'dragging' : ''}`} onPointerMove={dragMap} onPointerUp={() => setMapDrag(null)} onPointerLeave={() => setMapDrag(null)}>
-        <LandscapeNotice />
+        <LandscapeNotice show={showLandscapeNotice} />
         <button className="back-btn" onClick={goBack}>返回</button>
         <MusicToggle />
         <div className="map-sky" />
@@ -737,7 +758,7 @@ function App() {
 
   return (
     <main className={`novel-screen node-screen node-${activeNode.id}`}>
-      <LandscapeNotice />
+      <LandscapeNotice show={showLandscapeNotice} />
       <button className="back-btn" onClick={goBack}>返回</button>
       <MusicToggle />
       <div key={transitionKey} className={`scene-bg scene-bg-${activeNode.id}`} />
