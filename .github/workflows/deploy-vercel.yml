@@ -18,6 +18,7 @@ jobs:
     env:
       VERCEL_ORG_ID: team_RmjjFijVCNIrcR3p2f1WyIZF
       VERCEL_PROJECT_ID: prj_wqzd0EGjKwkC9g91r3KFI8hNezs2
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,10 +36,11 @@ jobs:
         run: npm install --global vercel@54.5.0
 
       - name: Pull Vercel environment
-        run: vercel pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN }}"
+        run: vercel pull --yes --environment=production
 
       - name: Build
-        run: vercel build --prod --token="${{ secrets.VERCEL_TOKEN }}"
+        run: vercel build --prod
 
       - name: Deploy production
-        run: vercel deploy --prebuilt --prod --yes --token="${{ secrets.VERCEL_TOKEN }}"
+        timeout-minutes: 3
+        run: vercel deploy --prebuilt --prod --yes
