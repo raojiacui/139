@@ -773,11 +773,12 @@ function App() {
       );
     }
     return (
-      <main className="novel-screen intro-screen">
-        <LandscapeNotice show={showLandscapeNotice} />
-        <button className="back-btn" onClick={goBack}>返回</button>
-        <MusicToggle />
-        <div className="cover-bg" />
+        <main className="novel-screen intro-screen">
+          <LandscapeNotice show={showLandscapeNotice} />
+          <button className="back-btn" onClick={goBack}>返回</button>
+          <MusicToggle />
+          <LanguageToggle />
+          <div className="cover-bg" />
         <section className="intro-copy" onClick={advanceIntro}>
           <div className="poem-lines">{introLines.map((line) => <p key={line}>{line}</p>)}</div>
           <small>点击进入循环地图</small>
@@ -792,6 +793,7 @@ function App() {
         <LandscapeNotice show={showLandscapeNotice} />
         <button className="back-btn" onClick={goBack}>返回</button>
         <MusicToggle />
+        <LanguageToggle />
         <div className="cover-bg" />
         <section className="finale-copy">
           {finaleDisplayLines.map((line) => <p key={line}>{line}</p>)}
@@ -809,6 +811,7 @@ function App() {
         <LandscapeNotice show={showLandscapeNotice} />
         <button className="back-btn" onClick={goBack}>返回</button>
         <MusicToggle />
+        <LanguageToggle />
         <div className="map-sky" />
         <header className="map-title"><p>第139次循环 · 灾难地点</p><h1>循环地图</h1></header>
         <section className="map-viewport" onPointerDown={startMapDrag}>
@@ -846,6 +849,7 @@ function App() {
       <LandscapeNotice show={showLandscapeNotice} />
       <button className="back-btn" onClick={goBack}>返回</button>
       <MusicToggle />
+      <LanguageToggle />
       <div key={transitionKey} className={`scene-bg scene-bg-${activeNode.id}`} />
       <div key={`flash-${transitionKey}`} className="scene-flash" />
       {nodePrelude && (
