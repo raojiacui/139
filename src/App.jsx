@@ -662,6 +662,7 @@ function App() {
             <p>第139次循环</p>
             <h1>第139次崩塌</h1>
             <span>修复灾难地点，在一次次循环里找回真正需要被拯救的人。</span>
+            <small className="landscape-tip">横屏体验更佳</small>
             <div className="start-actions">
               <button onClick={() => { remember(); setIntroIndex(0); }}>开始游戏</button>
               <button className="guide-btn" onClick={() => setShowGuide(true)}>游戏说明</button>

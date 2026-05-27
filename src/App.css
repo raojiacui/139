@@ -318,6 +318,21 @@ button {
   line-height: 1.75;
 }
 
+.landscape-tip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  margin: 0 0 18px;
+  padding: 5px 12px;
+  border: 1px solid rgba(244, 209, 138, 0.34);
+  border-radius: 999px;
+  background: rgba(20, 16, 12, 0.42);
+  color: rgba(244, 209, 138, 0.9);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  backdrop-filter: blur(8px);
+}
+
 .start-actions {
   display: flex;
   flex-wrap: wrap;
@@ -2222,7 +2237,7 @@ button {
   }
 }
 
-@media (hover: none) and (pointer: coarse) and (orientation: landscape) and (max-height: 520px) {
+@media (max-height: 540px) and (orientation: landscape) {
   html,
   body,
   #root {
@@ -2254,7 +2269,7 @@ button {
   }
 
   .start-copy {
-    width: min(620px, calc(100vw - 96px));
+    width: min(620px, calc(100vw - 116px));
     padding-top: 12px;
   }
 
@@ -2270,9 +2285,16 @@ button {
 
   .start-copy span {
     max-width: 500px;
-    margin-bottom: 14px;
+    margin-bottom: 8px;
     font-size: 15px;
     line-height: 1.45;
+  }
+
+  .landscape-tip {
+    min-height: 26px;
+    margin-bottom: 10px;
+    padding: 4px 10px;
+    font-size: 12px;
   }
 
   .start-copy button {
@@ -2313,11 +2335,11 @@ button {
   }
 
   .map-viewport {
-    inset: 13vh 4vw 8vh;
+    inset: 11vh max(3vw, env(safe-area-inset-right)) 7vh max(3vw, env(safe-area-inset-left));
   }
 
   .map-world {
-    width: min(860px, 82vw);
+    width: min(860px, 80vw);
     border-radius: 18px;
   }
 
@@ -2406,9 +2428,9 @@ button {
   }
 
   .dialogue {
-    left: max(150px, calc(env(safe-area-inset-left) + 132px));
-    right: max(150px, calc(env(safe-area-inset-right) + 132px));
-    bottom: 156px;
+    left: max(128px, calc(env(safe-area-inset-left) + 116px));
+    right: max(128px, calc(env(safe-area-inset-right) + 116px));
+    bottom: min(34vh, 138px);
     width: auto;
     transform: none;
     padding: 8px 0;
@@ -2429,9 +2451,9 @@ button {
   }
 
   .npc {
-    bottom: 96px;
-    width: min(22vw, 170px);
-    height: min(56vh, 230px);
+    bottom: min(23vh, 86px);
+    width: min(20vw, 150px);
+    height: min(50vh, 205px);
   }
 
   .npc-lia {
@@ -2447,15 +2469,15 @@ button {
   .npc-chat-panel {
     left: 50%;
     bottom: max(8px, env(safe-area-inset-bottom));
-    width: min(760px, calc(100vw - 64px));
-    max-height: 39vh;
+    width: min(760px, calc(100vw - 88px));
+    max-height: 38vh;
     transform: translateX(-50%);
     padding: 12px;
     overflow-y: auto;
   }
 
   .ending-card {
-    max-height: 58vh;
+    max-height: 56vh;
   }
 
   .question-card p,
