@@ -186,6 +186,75 @@ const EN_CREATURES = {
   bird: { label: 'Bird', action: 'The bird spreads its wings and cuts across the river light.' },
   whale: { label: 'Whale', action: 'The whale moves slowly through the water glow, carrying a deep echo.' },
 };
+const EN_QUESTIONS = {
+  ruins: [
+    ['Two people are trapped in the ruins. You can only save one first. What do you do?', [['Save the one closest to me', 'dog'], ['Judge who is most likely to survive', 'cat'], ['Listen for the echo inside the ruins', 'whale']]],
+    ['The other person may resent you. Would you still choose?', [['Yes. Someone still has to be saved', 'dog'], ['I should not decide for them', 'cat'], ['Resentment becomes another echo', 'whale']]],
+    ['The house is collapsing. What must be repaired first?', [['The load-bearing beam', 'tree'], ['The place where wind pours in', 'cat'], ['The light still burning', 'bird']]],
+    ['If the next loop collapses again, will you come back?', [['Until everyone is saved', 'dog'], ['Only if coming back still means something', 'cat'], ['I do not know how to leave', 'tree']]],
+  ],
+  riverbank: [
+    ['Before the flood arrives, what do you do first?', [['Lead people to higher ground', 'bird'], ['Check who has not evacuated', 'dog'], ['Listen for cracks under the water', 'whale']]],
+    ['If you can take only one person, who do you choose?', [['The most frightened one', 'dog'], ['The one most likely to survive', 'cat'], ['The one still calling for help', 'whale']]],
+    ['The water source is polluted. How do you purify it?', [['Filter and boil it before sharing', 'tree'], ['Taste it myself first', 'dog'], ['Wait until the sediment settles', 'cat']]],
+    ['What if this river is the water inside your heart?', [['It has drowned me many times', 'whale'], ['I will build a bank for it', 'tree'], ['I will swim across', 'bird']]],
+  ],
+  woods: [
+    ['Fire is coming from the east. Where do you lead everyone?', [['Run toward the upwind side', 'bird'], ['Find water first', 'whale'], ['Keep everyone close to me', 'dog']]],
+    ['Someone refuses to leave the fireground. What do you do?', [['Pull them away', 'dog'], ['Explain the danger and let them choose', 'cat'], ['Stay beside them for a while', 'tree']]],
+    ['What can you do before the fire reaches you?', [['Clear a firebreak', 'tree'], ['Climb high and read the wind', 'cat'], ['Call everyone to leave', 'bird']]],
+    ['The fire is out, but you are still shaking. What scares you?', [['That I can never save them again', 'dog'], ['That I am not sad enough', 'cat'], ['That this was never really a forest', 'tree']]],
+  ],
+  cabin: [
+    ['A storm arrives. The cabin can only hold a few people. Who enters first?', [['The weakest people', 'dog'], ['Arrange by number and position', 'cat'], ['Sit down around the fire', 'tree']]],
+    ['The roof has cracked. Which part do you patch first?', [['The largest hole above', 'bird'], ['The leak above the bed', 'dog'], ['The beam holding the roof', 'tree']]],
+    ['If one day you no longer came back, where would you go?', [['Somewhere without disasters', 'bird'], ['Nowhere. I would stay here', 'tree'], ['Back to that person', 'dog']]],
+    ['When will you patch the crack inside your heart?', [['After the world is safe', 'dog'], ['When I no longer need anyone', 'cat'], ['Now', 'tree']]],
+  ],
+  puddle: [
+    ['You saved many people, yet the world keeps collapsing. Why?', [['Because the world is still asking to be saved', 'whale'], ['Because I have not tried hard enough', 'dog'], ['Maybe the world was never savable', 'cat']]],
+    ['You have never saved yourself. Lower your head and look.', [['Look into the puddle', 'whale'], ['Turn away', 'cat'], ['Ask: who am I really?', 'tree']]],
+    ['What if the whole world is only your inner landscape?', [['I have been repairing wounds', 'tree'], ['I have been looking for someone', 'dog'], ['I have been listening to my own echo', 'whale']]],
+    ['This time you can leave the loop. Who will you save first?', [['Myself', 'tree'], ['Still them', 'dog'], ['I do not know', 'cat']]],
+  ],
+};
+const EN_REPORTS = {
+  dog: {
+    summary: 'You resemble a dog that cannot accept goodbye. You keep saving others because part of you still believes loss can be rewritten if you are loyal enough.',
+    state: 'You may be carrying responsibility and separation anxiety at the same time.',
+    pattern: 'You are reliable and deeply caring, but you may over-function before you process your own grief.',
+    breakthrough: 'Your task is to allow boundaries, loss, and self-worth without a rescue mission.',
+    practice: 'For seven days, name one thing you do not have to be responsible for, then state one need clearly.',
+  },
+  cat: {
+    summary: 'You resemble a cat that keeps distance. You see clearly, but often hide vulnerability behind independence.',
+    state: 'You may be in defensive independence: observing safety before allowing closeness.',
+    pattern: 'Your boundaries are strong, but asking for help can feel like losing control.',
+    breakthrough: 'Separate healthy boundaries from emotional isolation.',
+    practice: 'Share one small worry with a trusted person and ask only to be heard.',
+  },
+  whale: {
+    summary: 'You resemble a whale that sinks grief into the deep. You hear many echoes, but put your own voice last.',
+    state: 'You may be emotionally overloaded and turned inward.',
+    pattern: 'Your empathy is deep, but silence can turn feelings into pressure.',
+    breakthrough: 'Give your feelings an outlet instead of swallowing every echo.',
+    practice: 'Each day write three lines: what I feel, where it came from, and what I need now.',
+  },
+  tree: {
+    summary: 'You resemble a tree that grows pain into rings. You look steady, but may confuse endurance with healing.',
+    state: 'You may be stuck after long-term suppression: stable outside, frozen inside.',
+    pattern: 'You can hold a lot, but you may turn fatigue into duty.',
+    breakthrough: 'You do not need to uproot the past; you need to grow again.',
+    practice: 'Make one small change each day for seven days and notice how your body responds.',
+  },
+  bird: {
+    summary: 'You resemble a bird with nowhere to land. You fly toward safety, but may forget to build a place to rest.',
+    state: 'You may be balancing pressure-avoidance with a real longing for freedom.',
+    pattern: 'You adapt quickly, but leaving can become easier than choosing what matters.',
+    breakthrough: 'Freedom also means choosing a place you are willing to care for.',
+    practice: 'Create one small perch: a time, place, or habit you keep for seven days.',
+  },
+};
 
 function resolveIdentity(scores, miniStats) {
   const adjusted = { ...defaultScores, ...scores };
@@ -423,6 +492,146 @@ function evaluateNextLevel(currentLevel, stat) {
   if (strong) return Math.min(2, currentLevel + 1);
   if (weak) return Math.max(0, currentLevel - 1);
   return currentLevel;
+}
+
+function EnglishGame({ onLanguageToggle }) {
+  const nodeIds = Object.keys(EN_NODES);
+  const [screen, setScreen] = useState('start');
+  const [activeNode, setActiveNode] = useState(null);
+  const [stepIndex, setStepIndex] = useState(0);
+  const [scores, setScores] = useState(defaultScores);
+  const [completed, setCompleted] = useState([]);
+  const [ending, setEnding] = useState(null);
+  const [chosenCreature, setChosenCreature] = useState(null);
+
+  const node = activeNode ? EN_NODES[activeNode] : null;
+  const question = activeNode ? EN_QUESTIONS[activeNode][stepIndex] : null;
+
+  function choose(identity) {
+    const nextScores = { ...scores, [identity]: (scores[identity] || 0) + 1 };
+    setScores(nextScores);
+    if (stepIndex < 3) {
+      setStepIndex((value) => value + 1);
+      return;
+    }
+    const nextCompleted = completed.includes(activeNode) ? completed : [...completed, activeNode];
+    setCompleted(nextCompleted);
+    if (nextCompleted.length >= 3) {
+      const identityResult = Object.entries(nextScores).sort((a, b) => b[1] - a[1])[0][0];
+      setEnding(identityResult);
+      setScreen('map');
+    } else {
+      setActiveNode(null);
+      setStepIndex(0);
+      setScreen('map');
+    }
+  }
+
+  if (screen === 'start') {
+    return (
+      <main className="novel-screen start-screen">
+        <button className="language-btn" onClick={onLanguageToggle}>中文</button>
+        <div className="cover-bg" />
+        <section className="start-copy">
+          <p>{EN_UI.startLoop}</p>
+          <h1>{EN_UI.title}</h1>
+          <span>{EN_UI.subtitle}</span>
+          <small className="landscape-tip">{EN_UI.landscapeTip}</small>
+          <div className="start-actions">
+            <button onClick={() => setScreen('intro')}>{EN_UI.start}</button>
+            <button className="guide-btn" onClick={() => window.alert(EN_UI.guideItems.join('\n\n'))}>{EN_UI.guide}</button>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  if (screen === 'intro') {
+    return (
+      <main className="novel-screen intro-screen">
+        <button className="back-btn" onClick={() => setScreen('start')}>{EN_UI.back}</button>
+        <button className="language-btn" onClick={onLanguageToggle}>中文</button>
+        <div className="cover-bg" />
+        <section className="intro-copy" onClick={() => setScreen('map')}>
+          <div className="poem-lines">{EN_UI.introLines.map((line) => <p key={line}>{line}</p>)}</div>
+          <small>{EN_UI.enterMap}</small>
+        </section>
+      </main>
+    );
+  }
+
+  if (screen === 'map') {
+    return (
+      <main className="map-screen">
+        <button className="back-btn" onClick={() => setScreen(ending ? 'start' : 'intro')}>{EN_UI.back}</button>
+        <button className="language-btn" onClick={onLanguageToggle}>中文</button>
+        <div className="map-sky" />
+        <header className="map-title"><p>{EN_UI.mapMeta}</p><h1>{EN_UI.mapTitle}</h1></header>
+        <section className="map-viewport">
+          <div className="map-world map-world-intro">
+            <div className="map-bg" />
+            <div className="map-ridge ridge-back" />
+            <div className="map-ridge ridge-left" />
+            <div className="map-ridge ridge-right" />
+            <div className="map-forest" />
+            <div className="map-cabin" />
+            <svg className="river" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M4 72 C 22 35, 36 82, 51 52 S 77 21, 96 57" /></svg>
+            {ending ? nodeIds.map((id, index) => {
+              const identity = ['dog', 'cat', 'tree', 'bird', 'whale'][index];
+              const creature = { ...identityCreatures[identity], ...EN_CREATURES[identity] };
+              return (
+                <button key={identity} className={`map-creature creature-${identity} ${chosenCreature === identity ? 'active' : ''}`} style={{ left: `${NODES[index].x}%`, top: `${NODES[index].y}%` }} onClick={() => setChosenCreature(identity)}>
+                  <img src={creature.image} alt={creature.label} />
+                  <b>{creature.label}</b>
+                </button>
+              );
+            }) : nodeIds.map((id, index) => (
+              <button key={id} className={`map-node ${completed.includes(id) ? 'done' : ''}`} style={{ left: `${NODES[index].x}%`, top: `${NODES[index].y}%` }} onClick={() => { if (!completed.includes(id)) { setActiveNode(id); setStepIndex(0); setScreen('node'); } }}>
+                <i>{index + 1}</i><b>{EN_NODES[id].title}</b><small>{EN_NODES[id].risk}</small>
+              </button>
+            ))}
+          </div>
+        </section>
+        {ending && (
+          <section className="ending-card">
+            <p>{EN_UI.endingMeta}</p>
+            <h2>{EN_UI.endingTitlePrefix}{EN_CREATURES[ending].label}</h2>
+            <span className="ending-summary">{EN_REPORTS[ending].summary}</span>
+            <div className="analysis-grid">
+              <article><b>{EN_UI.state}</b><span>{EN_REPORTS[ending].state}</span></article>
+              <article><b>{EN_UI.pattern}</b><span>{EN_REPORTS[ending].pattern}</span></article>
+              <article><b>{EN_UI.breakthrough}</b><span>{EN_REPORTS[ending].breakthrough}</span></article>
+              <article><b>{EN_UI.practice}</b><span>{EN_REPORTS[ending].practice}</span></article>
+            </div>
+            <span className="ending-note">{EN_UI.endingNote}</span>
+            <button className="identity-return-btn" onClick={() => setScreen('start')}>{EN_UI.restart}</button>
+          </section>
+        )}
+      </main>
+    );
+  }
+
+  if (screen === 'node') {
+    return (
+      <main className={`novel-screen node-screen node-${activeNode}`}>
+        <button className="back-btn" onClick={() => setScreen('map')}>{EN_UI.back}</button>
+        <button className="language-btn" onClick={onLanguageToggle}>中文</button>
+        <div className={`scene-bg scene-bg-${activeNode}`} />
+        <header className="top-pill"><span>{node.title}</span><strong>{stepIndex + 1}/4</strong><span>{node.risk}</span></header>
+        <section className="scene-labels"><span>{EN_UI.route}</span><strong>{EN_UI.npcTalk}</strong></section>
+        <section className="dialogue"><p>{question[0]}</p><small>{EN_UI.clickContinue}</small></section>
+        <section className="question-card">
+          <p>{node.title}</p>
+          <h2>{question[0]}</h2>
+          <div className="choice-list">
+            {question[1].map(([text, identity]) => <button key={text} onClick={() => choose(identity)}>{text}</button>)}
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  return null;
 }
 
 function App() {
@@ -731,6 +940,10 @@ function App() {
       setPendingScores(scores);
     }
     setAiLoading(false);
+  }
+
+  if (isEnglish) {
+    return <EnglishGame onLanguageToggle={() => setLanguage('zh')} />;
   }
 
   if (screen === 'intro') {
