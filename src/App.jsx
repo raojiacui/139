@@ -84,6 +84,17 @@ function q(speaker, line, choices) {
   };
 }
 
+function LandscapeNotice() {
+  return (
+    <aside className="landscape-notice" aria-hidden="true">
+      <div>
+        <p>请横屏体验</p>
+        <span>将手机旋转为横屏后继续游戏</span>
+      </div>
+    </aside>
+  );
+}
+
 const awakeningScript = [
   q('gaia', '这一次，你忽然停下。为什么每一轮都从同一个问题开始？', [['因为有人在逼我回答', 'cat'], ['因为我还没有醒来', 'whale'], ['因为答案一直在我身上', 'tree']]),
   q('lia', '你反问系统：那我是谁？空气安静了。你先看见了什么？', [['一双等我回去的眼睛', 'dog'], ['一片没有出口的水面', 'whale'], ['一条被我反复走过的路', 'bird']]),
@@ -622,6 +633,7 @@ function App() {
     if (introIndex === -1) {
       return (
         <main className="novel-screen start-screen">
+          <LandscapeNotice />
           <button className="back-btn" onClick={goBack}>返回</button>
           <MusicToggle />
           <div className="cover-bg" />
@@ -656,6 +668,7 @@ function App() {
     }
     return (
       <main className="novel-screen intro-screen">
+        <LandscapeNotice />
         <button className="back-btn" onClick={goBack}>返回</button>
         <MusicToggle />
         <div className="cover-bg" />
@@ -670,6 +683,7 @@ function App() {
   if (finale) {
     return (
       <main className="novel-screen finale-screen">
+        <LandscapeNotice />
         <button className="back-btn" onClick={goBack}>返回</button>
         <MusicToggle />
         <div className="cover-bg" />
@@ -686,6 +700,7 @@ function App() {
   if (screen === 'map') {
     return (
       <main className={`map-screen ${mapDrag ? 'dragging' : ''}`} onPointerMove={dragMap} onPointerUp={() => setMapDrag(null)} onPointerLeave={() => setMapDrag(null)}>
+        <LandscapeNotice />
         <button className="back-btn" onClick={goBack}>返回</button>
         <MusicToggle />
         <div className="map-sky" />
@@ -722,6 +737,7 @@ function App() {
 
   return (
     <main className={`novel-screen node-screen node-${activeNode.id}`}>
+      <LandscapeNotice />
       <button className="back-btn" onClick={goBack}>返回</button>
       <MusicToggle />
       <div key={transitionKey} className={`scene-bg scene-bg-${activeNode.id}`} />
