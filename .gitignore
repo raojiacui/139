@@ -2,7 +2,8 @@
 .env.*
 .omc/
 .omx/
-.vercel/
+.vercel/*
+!.vercel/project.json
 node_modules/
 dist/
 dist-check/
