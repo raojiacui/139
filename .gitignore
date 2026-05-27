@@ -1,8 +1,10 @@
 .env
 .env.*
-node_modules/
-dist/
 .omc/
 .omx/
+.vercel/
+node_modules/
+dist/
+dist-check/
 *.log
 .DS_Store

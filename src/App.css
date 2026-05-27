@@ -1040,7 +1040,9 @@ button {
 }
 
 .ending-card {
-  width: min(820px, calc(100vw - 42px));
+  width: min(920px, calc(100vw - 42px));
+  max-height: min(74vh, 680px);
+  overflow-y: auto;
 }
 
 @keyframes card-up {
@@ -1156,6 +1158,48 @@ button {
   color: rgba(255, 247, 236, 0.82);
   font-size: 19px;
   line-height: 1.8;
+}
+
+.ending-summary {
+  padding: 14px 16px;
+  border: 1px solid rgba(189, 245, 234, 0.25);
+  border-radius: 10px;
+  background: rgba(189, 245, 234, 0.08);
+}
+
+.analysis-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.analysis-grid article {
+  min-width: 0;
+  padding: 15px 16px;
+  border: 1px solid rgba(255, 247, 236, 0.18);
+  border-radius: 10px;
+  background: rgba(255, 247, 236, 0.08);
+}
+
+.analysis-grid b {
+  display: block;
+  margin-bottom: 8px;
+  color: #f4d18a;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+}
+
+.analysis-grid span {
+  margin: 0;
+  color: rgba(255, 247, 236, 0.82);
+  font-size: 16px;
+  line-height: 1.72;
+}
+
+.ending-note {
+  color: rgba(255, 247, 236, 0.62) !important;
+  font-size: 15px !important;
 }
 
 .mini-overlay {
@@ -1957,7 +2001,7 @@ button {
 
   .ending-card {
     bottom: calc(14px + env(safe-area-inset-bottom));
-    max-height: 62vh;
+    max-height: 66vh;
     overflow-y: auto;
     padding: 16px;
   }
@@ -1966,6 +2010,30 @@ button {
     margin-bottom: 11px;
     font-size: 15px;
     line-height: 1.6;
+  }
+
+  .analysis-grid {
+    grid-template-columns: 1fr;
+    gap: 9px;
+    margin: 12px 0;
+  }
+
+  .analysis-grid article {
+    padding: 12px;
+  }
+
+  .analysis-grid b {
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+
+  .analysis-grid span {
+    font-size: 14px;
+    line-height: 1.58;
+  }
+
+  .ending-note {
+    font-size: 13px !important;
   }
 
   .mini-overlay {

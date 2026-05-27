@@ -381,6 +381,7 @@ function App() {
   const npc = step ? NPCS[step.speaker] : NPCS.lia;
   const nodeIndex = activeNode ? NODES.findIndex((node) => node.id === activeNode.id) : 0;
   const showIdentityMap = identityMapUnlocked || Boolean(ending);
+  const endingReport = ending ? (ending.report || getEndingReport(ending.identity)) : null;
 
   function snapshot() {
     return { screen, introIndex, activeNodeId: activeNode?.id || null, stepIndex, scores, miniStats, miniType, playerLevel, completedNodes, ending, identityMapUnlocked, finale, mapView, miniPlayedThisNode, nodePrelude, musicOn };
@@ -549,7 +550,7 @@ function App() {
       setCompletedNodes(nodeIds);
       if (nodeIds.length >= 3) {
         const identity = resolveIdentity(scoreState, stats);
-        setEnding({ identity, title: `水坑倒影：${identityCreatures[identity].label}`, text: getEndingText(identity) });
+        setEnding({ identity, title: `水坑倒影：${identityCreatures[identity].label}`, report: getEndingReport(identity) });
       } else {
         setScreen('map');
       }
@@ -759,8 +760,26 @@ function App() {
         <section className="ending-card">
           <p>第 3 轮 · 身份真相</p>
           <h2>水坑倒影：{identityCreatures[ending.identity].label}</h2>
-          <span>{ending.text}</span>
-          <span>你修复的不是外部真实世界，而是自己的内心世界。</span>
+          <span className="ending-summary">{endingReport.summary}</span>
+          <div className="analysis-grid">
+            <article>
+              <b>当下心理状态</b>
+              <span>{endingReport.state}</span>
+            </article>
+            <article>
+              <b>行为模式</b>
+              <span>{endingReport.pattern}</span>
+            </article>
+            <article>
+              <b>突破方向</b>
+              <span>{endingReport.breakthrough}</span>
+            </article>
+            <article>
+              <b>7 日行动建议</b>
+              <span>{endingReport.practice}</span>
+            </article>
+          </div>
+          <span className="ending-note">这不是临床诊断，而是一份基于你在循环中的选择生成的心理画像。你修复的不是外部真实世界，而是自己的内心世界。</span>
           <button className="identity-return-btn" onClick={returnToIdentityMap}>回到最初地图</button>
         </section>
       )}
@@ -768,15 +787,45 @@ function App() {
   );
 }
 
-function getEndingText(identity) {
-  const lines = {
-    dog: '你更像一只不肯接受告别的狗。你反复救人，是因为还没有学会承认那个人已经离开。',
-    cat: '你更像一只保持距离的猫。你救下别人，却总把自己隔在被帮助之外。',
-    whale: '你更像一头把悲伤沉入深处的鲸。你听见所有人的呼救，却很少相信自己的声音也能被听见。',
-    tree: '你更像一棵把痛苦长成年轮的树。你说自己在守护世界，其实只是被困在原地太久。',
-    bird: '你更像一只找不到降落处的鸟。你一直飞向安全的地方，却忘了给自己一个家。',
+function getEndingReport(identity) {
+  const reports = {
+    dog: {
+      summary: '你更像一只不肯接受告别的狗。你反复救人，是因为内心仍在努力证明：只要自己再快一点、再忠诚一点、再多承担一点，失去就可以被改写。',
+      state: '你现在可能处在高责任感与分离焦虑交织的状态。你对关系很敏感，容易把别人的痛苦自动归入自己的责任范围，也会在安静下来时反复复盘“我是不是还能做得更多”。',
+      pattern: '你的优势是可靠、共情和行动力强；压力点是过度补偿。你习惯先保护别人，再处理自己的悲伤，因此外表像是在解决问题，内在却一直停在告别现场。',
+      breakthrough: '真正的突破不是继续证明自己值得被留下，而是允许关系有边界、允许失去发生、允许自己在没有拯救任务的时候仍然有价值。',
+      practice: '每天写下一个“今天我不必负责的事”，并把一次主动照顾别人改成清楚表达自己的需要。练习说：我愿意陪你，但这件事不全由我承担。',
+    },
+    cat: {
+      summary: '你更像一只保持距离的猫。你能看见局势，也能做出理性选择，但你常把真正的脆弱藏在独立、冷静和“不麻烦别人”的姿态后面。',
+      state: '你当下可能处在防御性独立的状态。你不是没有情绪，而是习惯先观察、先判断安全，再决定要不要靠近。亲密关系越重要，你越可能表现得像“不需要”。',
+      pattern: '你的优势是边界清晰、判断敏锐、能在混乱中保持清醒；压力点是回避求助。你会把依赖理解成失控，把被看见理解成暴露，于是把自己隔在支持系统之外。',
+      breakthrough: '突破点在于把“保持边界”和“接受连接”分开。成熟的独立不是永远不需要别人，而是知道什么时候可以安全地让别人靠近一点。',
+      practice: '选一个可信任的人，分享一件不需要立刻解决的小困扰，只请求倾听，不请求建议。目标不是变得外向，而是让真实感慢慢进入关系。',
+    },
+    whale: {
+      summary: '你更像一头把悲伤沉入深处的鲸。你能听见很多细微的情绪，也愿意承载别人的回声，但你自己的声音常常被放到最后。',
+      state: '你当下可能处在情绪过载后的内收状态。你感受力很强，容易捕捉环境里的痛苦、未说出口的失望和关系中的暗流，却不一定知道该如何把这些感受说出来。',
+      pattern: '你的优势是深度共情、直觉细腻、能理解复杂情绪；压力点是沉默承受。你可能用“我没事”维持平静，却让情绪在心里越积越深。',
+      breakthrough: '突破不是让自己不敏感，而是给感受一个出口。你需要从“替所有人听见”转向“也让自己被听见”。',
+      practice: '每天用三句话记录情绪：我感觉到什么、它从哪里来、我现在需要什么。遇到压力时先命名情绪，再决定行动，不要直接把所有感受吞回去。',
+    },
+    tree: {
+      summary: '你更像一棵把痛苦长成年轮的树。你看起来稳定、能撑住场面，但也可能把“忍住”和“坚强”混在了一起。',
+      state: '你当下可能处在长期压抑后的僵持状态。你很能扛事，也习惯成为别人眼中的稳定支点，但内在某些部分已经站在原地太久，既想改变，又害怕改变会让一切失控。',
+      pattern: '你的优势是耐心、承诺感和恢复力；压力点是过度忍耐。你会把伤口合理化成经验，把疲惫包装成责任，直到自己几乎忘记原本想去哪里。',
+      breakthrough: '突破点不是拔掉过去，而是重新生长。你需要把“我必须撑住”改成“我可以移动一点点”，用小范围变化重新找回选择感。',
+      practice: '连续 7 天做一个微小改变：换一条路线、整理一个角落、拒绝一个不必要的请求。每次改变后记录身体感受，让自己重新适应“我可以动”。',
+    },
+    bird: {
+      summary: '你更像一只找不到降落处的鸟。你一直飞向更安全、更自由的地方，却可能在不停迁徙中忘了给自己建立一个稳定的落点。',
+      state: '你当下可能处在逃离压力与渴望自由并存的状态。你对束缚很敏感，讨厌被固定评价，也害怕被困在某种身份、关系或生活节奏里。',
+      pattern: '你的优势是适应力强、视野开阔、能快速寻找出口；压力点是难以停留。每当事情变得沉重，你可能先寻找下一个方向，而不是确认自己真正想留下什么。',
+      breakthrough: '突破不是停止飞翔，而是学会选择降落。自由不只是离开不舒服的地方，也包括主动建造一个你愿意负责的生活坐标。',
+      practice: '为自己设定一个小型“栖息地”：固定一个时间、空间或习惯，连续 7 天不更换。用稳定承接自由，让行动不再只是逃离。',
+    },
   };
-  return lines[identity];
+  return reports[identity];
 }
 
 export default App;
