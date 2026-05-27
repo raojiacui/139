@@ -65,6 +65,26 @@ button {
   background: rgba(244, 209, 138, 0.28);
 }
 
+.language-btn {
+  position: absolute;
+  z-index: 31;
+  right: 126px;
+  top: 22px;
+  min-width: 86px;
+  min-height: 42px;
+  border: 1px solid rgba(255, 247, 236, 0.46);
+  border-radius: 999px;
+  background: rgba(18, 15, 13, 0.58);
+  color: #fff7ec;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+}
+
+.language-btn:hover {
+  background: rgba(244, 209, 138, 0.28);
+}
+
 .landscape-notice {
   display: none;
 }
@@ -1721,7 +1741,8 @@ button {
   }
 
   .back-btn,
-  .music-btn {
+  .music-btn,
+  .language-btn {
     top: max(12px, env(safe-area-inset-top));
     min-width: 68px;
     min-height: 36px;
@@ -1734,6 +1755,10 @@ button {
 
   .music-btn {
     right: 12px;
+  }
+
+  .language-btn {
+    right: 88px;
   }
 
   .start-copy {
@@ -2253,7 +2278,8 @@ button {
   }
 
   .back-btn,
-  .music-btn {
+  .music-btn,
+  .language-btn {
     top: max(8px, env(safe-area-inset-top));
     min-width: 64px;
     min-height: 34px;
@@ -2266,6 +2292,10 @@ button {
 
   .music-btn {
     right: max(10px, env(safe-area-inset-right));
+  }
+
+  .language-btn {
+    right: max(82px, calc(env(safe-area-inset-right) + 76px));
   }
 
   .start-copy {

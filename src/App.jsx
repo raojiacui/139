@@ -3,6 +3,7 @@ import { fetchNpcFollowUp } from './services/aiService';
 import './App.css';
 
 const SAVE_KEY = 'infinite-loop-game-progress-v1';
+const LANG_KEY = 'infinite-loop-game-language-v1';
 const assetUrl = (path) => `${import.meta.env.BASE_URL}${path}`;
 [
   ['--scene-default', 'scene1.jpg'],
@@ -84,12 +85,12 @@ function q(speaker, line, choices) {
   };
 }
 
-function LandscapeNotice({ show }) {
+function LandscapeNotice({ show, title = '请横屏体验', body = '将手机旋转为横屏后继续游戏。如果没有旋转，请关闭手机的竖排方向锁定。' }) {
   return (
     <aside className={`landscape-notice ${show ? 'show' : ''}`} aria-hidden={!show}>
       <div>
-        <p>请横屏体验</p>
-        <span>将手机旋转为横屏后继续游戏。如果没有旋转，请关闭手机的竖排方向锁定。</span>
+        <p>{title}</p>
+        <span>{body}</span>
       </div>
     </aside>
   );
@@ -118,6 +119,73 @@ const finaleDisplayLines = [
 
 const MINI_GAMES = ['snake', 'poemLine', 'maze'];
 const DIFFICULTY_LABELS = ['易', '中', '难'];
+const EN_UI = {
+  startLoop: 'Loop 139',
+  title: 'The 139th Collapse',
+  subtitle: 'Repair disaster sites across repeated loops and find the one who truly needs saving.',
+  landscapeTip: 'Best played in landscape',
+  start: 'Start',
+  guide: 'Guide',
+  back: 'Back',
+  musicOn: 'Music On',
+  musicOff: 'Music Off',
+  portraitTitle: 'Please rotate your phone',
+  portraitBody: 'Continue in landscape mode. If the screen does not rotate, turn off portrait orientation lock.',
+  guideTitle: 'Loop Repairer Field Guide',
+  guideItems: [
+    'Choose disaster sites on the loop map. Clear three scenes to infer your final identity.',
+    'Each scene has four questions. Fixed choices shape your identity; free answers trigger NPC replies.',
+    'Minigame performance also contributes to the final identity inference.',
+    'After the identity is inferred, return to the map and choose the matching creature to reach the finale.',
+  ],
+  introLines: [
+    'Dust covers the dream; the past falls like ash.',
+    'You return again with memory burning into smoke.',
+    'You lost the grief behind you and cannot see the road ahead.',
+    'Only one stubborn thought remains carved into your bones.',
+    'In the cold, fate whispers.',
+    'You are called the one who saves the world.',
+  ],
+  enterMap: 'Tap to enter the loop map',
+  mapMeta: 'Loop 139 · Disaster Sites',
+  mapTitle: 'Loop Map',
+  route: 'Map -> Explore -> Solve -> Respond',
+  npcTalk: 'NPC Dialogue',
+  rewriting: 'Memory is rewriting',
+  clickContinue: 'Tap to continue',
+  waiting: 'is waiting for your answer.',
+  inputLoading: 'NPC is replying...',
+  inputPlaceholder: 'Type your answer',
+  send: 'Send',
+  continue: 'Continue',
+  identityDone: 'Identity inferred',
+  findSelf: 'Find your true self on the map',
+  chooseCreature: 'Tap the creature that matches your inferred identity.',
+  endingMeta: 'Round 3 · Identity Truth',
+  endingTitlePrefix: 'Puddle Reflection: ',
+  state: 'Current State',
+  pattern: 'Behavior Pattern',
+  breakthrough: 'Breakthrough',
+  practice: '7-Day Practice',
+  endingNote: 'This is not a clinical diagnosis. It is a game-based psychological profile generated from your choices in the loop.',
+  returnMap: 'Return to the first map',
+  gameOver: 'Game Over',
+  restart: 'Return to the 139th Collapse',
+};
+const EN_NODES = {
+  ruins: { title: 'Ruins', risk: 'Collapse risk' },
+  riverbank: { title: 'Riverbank', risk: 'Flood risk' },
+  woods: { title: 'Woods', risk: 'Wildfire risk' },
+  cabin: { title: 'Cabin', risk: 'Storm risk' },
+  puddle: { title: 'Puddle', risk: 'Mirror point' },
+};
+const EN_CREATURES = {
+  dog: { label: 'Dog', action: 'The dog jumps up, finally able to greet you.' },
+  cat: { label: 'Cat', action: 'The cat sways its tail and circles beside you.' },
+  tree: { label: 'Tree', action: 'The tree opens its branches, as if it has finally taken root.' },
+  bird: { label: 'Bird', action: 'The bird spreads its wings and cuts across the river light.' },
+  whale: { label: 'Whale', action: 'The whale moves slowly through the water glow, carrying a deep echo.' },
+};
 
 function resolveIdentity(scores, miniStats) {
   const adjusted = { ...defaultScores, ...scores };
@@ -358,6 +426,7 @@ function evaluateNextLevel(currentLevel, stat) {
 }
 
 function App() {
+  const [language, setLanguage] = useState(() => window.localStorage.getItem(LANG_KEY) || 'zh');
   const [screen, setScreen] = useState('intro');
   const [introIndex, setIntroIndex] = useState(-1);
   const [activeNode, setActiveNode] = useState(null);
@@ -386,6 +455,8 @@ function App() {
   const [showGuide, setShowGuide] = useState(false);
   const [showLandscapeNotice, setShowLandscapeNotice] = useState(false);
   const audioRef = useRef(null);
+  const isEnglish = language === 'en';
+  const en = EN_UI;
 
   const isAwakeningRound = activeNode && completedNodes.length >= 2 && !completedNodes.includes(activeNode.id);
   const script = activeNode ? (isAwakeningRound ? awakeningScript : scripts[activeNode.id]) : [];
@@ -469,8 +540,12 @@ function App() {
   }, []);
 
   useEffect(() => {
+    window.localStorage.setItem(LANG_KEY, language);
+  }, [language]);
+
+  useEffect(() => {
     window.localStorage.setItem(SAVE_KEY, JSON.stringify(snapshot()));
-  }, [screen, introIndex, activeNode, stepIndex, scores, miniStats, miniType, playerLevel, completedNodes, ending, identityMapUnlocked, finale, mapView, miniPlayedThisNode, nodePrelude, musicOn]);
+  }, [screen, introIndex, activeNode, stepIndex, scores, miniStats, miniType, playerLevel, completedNodes, ending, identityMapUnlocked, finale, mapView, miniPlayedThisNode, nodePrelude, musicOn, language]);
 
   useEffect(() => {
     const audio = new Audio(assetUrl('music-night-note.m4a'));
@@ -518,6 +593,14 @@ function App() {
           {musicOn ? '音乐开' : '音乐关'}
         </button>
       </>
+    );
+  }
+
+  function LanguageToggle() {
+    return (
+      <button className="language-btn" onClick={() => setLanguage((value) => (value === 'zh' ? 'en' : 'zh'))}>
+        {isEnglish ? '中文' : 'English'}
+      </button>
     );
   }
 
@@ -654,18 +737,19 @@ function App() {
     if (introIndex === -1) {
       return (
         <main className="novel-screen start-screen">
-          <LandscapeNotice show={showLandscapeNotice} />
-          <button className="back-btn" onClick={goBack}>返回</button>
+          <LandscapeNotice show={showLandscapeNotice} title={isEnglish ? en.portraitTitle : undefined} body={isEnglish ? en.portraitBody : undefined} />
+          <button className="back-btn" onClick={goBack}>{isEnglish ? en.back : '返回'}</button>
           <MusicToggle />
+          <LanguageToggle />
           <div className="cover-bg" />
           <section className="start-copy">
-            <p>第139次循环</p>
-            <h1>第139次崩塌</h1>
-            <span>修复灾难地点，在一次次循环里找回真正需要被拯救的人。</span>
-            <small className="landscape-tip">横屏体验更佳</small>
+            <p>{isEnglish ? en.startLoop : '第139次循环'}</p>
+            <h1>{isEnglish ? en.title : '第139次崩塌'}</h1>
+            <span>{isEnglish ? en.subtitle : '修复灾难地点，在一次次循环里找回真正需要被拯救的人。'}</span>
+            <small className="landscape-tip">{isEnglish ? en.landscapeTip : '横屏体验更佳'}</small>
             <div className="start-actions">
-              <button onClick={() => { remember(); setIntroIndex(0); }}>开始游戏</button>
-              <button className="guide-btn" onClick={() => setShowGuide(true)}>游戏说明</button>
+              <button onClick={() => { remember(); setIntroIndex(0); }}>{isEnglish ? en.start : '开始游戏'}</button>
+              <button className="guide-btn" onClick={() => setShowGuide(true)}>{isEnglish ? en.guide : '游戏说明'}</button>
             </div>
           </section>
           {showGuide && (
