@@ -42,5 +42,5 @@ jobs:
         run: vercel build --prod
 
       - name: Deploy production
-        timeout-minutes: 3
-        run: vercel deploy --prebuilt --prod --yes
+        timeout-minutes: 10
+        run: vercel deploy --prebuilt --prod --yes --token "$VERCEL_TOKEN"
