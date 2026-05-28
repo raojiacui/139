@@ -4,6 +4,8 @@
 .omx/
 .vercel/*
 !.vercel/project.json
+!.vercel/output
+!.vercel/output/**
 node_modules/
 dist/
 dist-check/
