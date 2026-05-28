@@ -35,12 +35,6 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@54.5.0
 
-      - name: Pull Vercel environment
-        run: vercel pull --yes --environment=production
-
-      - name: Build
-        run: vercel build --prod
-
-      - name: Deploy production
+      - name: Deploy to Vercel
         timeout-minutes: 10
-        run: vercel deploy --prebuilt --prod --yes --token "$VERCEL_TOKEN"
+        run: vercel deploy --prod --yes --token "$VERCEL_TOKEN"
