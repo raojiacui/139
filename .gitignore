@@ -2,10 +2,7 @@
 .env.*
 .omc/
 .omx/
-.vercel/*
-!.vercel/project.json
-!.vercel/output
-!.vercel/output/**
+.vercel/
 node_modules/
 dist/
 dist-check/
