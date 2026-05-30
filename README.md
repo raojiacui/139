@@ -8,13 +8,13 @@
 
 ## 游戏截图
 
-| 首页 | 循环地图 |
-|:---:|:---:|
-| ![首页](public/readme-s1.png) | ![剧情场景](public/readme-s2.png) |
-
-| 剧情对话 | 小游戏 | 中英文切换 |
+| 首页 | 剧情场景 | 中英文切换 |
 |:---:|:---:|:---:|
-| ![支持中英文切换](public/readme-s3.png) | ![分析结果，突破方向](public/readme-s4.png) | ![尾声](public/readme-s5.png) |
+| ![首页](public/readme-s1.png) | ![剧情](public/readme-s2.png) | ![中英文切换](public/readme-s3.png) |
+
+| 分析结果，突破方向 | 尾声 |
+|:---:|:---:|
+| ![分析结果](public/readme-s4.png) | ![尾声](public/readme-s5.png) |
 
 ---
 
@@ -50,7 +50,7 @@
 
 | 莉娅 (Lia) | 盖亚 (Gaia) |
 |:---:|:---:|
-| ![盖亚](public/readme-npc1.png) | ![莉娅](public/readme-npc2.jpg) |
+| ![莉娅](public/readme-npc1.png) | ![盖亚](public/readme-npc2.jpg) |
 | 你的引导者，陪伴你穿越每一次循环 | 星球意志，记忆碎片的守护者 |
 
 ---
