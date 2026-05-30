@@ -14,7 +14,7 @@
 
 | 剧情对话 | 小游戏 | 中英文切换 |
 |:---:|:---:|:---:|
-| ![剧情](public/readme-s3.png) | ![小游戏](public/readme-s4.png) | ![切换](public/readme-s5.png) |
+| ![剧情](public/readme-s3.png) | ![分析结果，突破方向](public/readme-s4.png) | ![切换](public/readme-s5.png) |
 
 ---
 
