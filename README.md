@@ -10,11 +10,11 @@
 
 | 首页 | 循环地图 |
 |:---:|:---:|
-| ![首页](public/readme-s1.png) | ![循环地图](public/readme-s2.png) |
+| ![首页](public/readme-s1.png) | ![剧情场景](public/readme-s2.png) |
 
 | 剧情对话 | 小游戏 | 中英文切换 |
 |:---:|:---:|:---:|
-| ![剧情](public/readme-s3.png) | ![分析结果，突破方向](public/readme-s4.png) | ![切换](public/readme-s5.png) |
+| ![支持中英文切换](public/readme-s3.png) | ![分析结果，突破方向](public/readme-s4.png) | ![尾声](public/readme-s5.png) |
 
 ---
 
