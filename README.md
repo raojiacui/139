@@ -8,13 +8,13 @@
 
 ## 游戏截图
 
-| 废墟 | 河边 |
+| 首页 | 循环地图 |
 |:---:|:---:|
-| ![废墟](public/scene1.jpg) | ![河边](public/scene-riverbank.jpg) |
+| ![首页](public/readme-s1.png) | ![循环地图](public/readme-s2.png) |
 
-| 枯树林 | 小屋 | 水坑 |
+| 剧情对话 | 小游戏 | 中英文切换 |
 |:---:|:---:|:---:|
-| ![枯树林](public/scene-woods.jpg) | ![小屋](public/scene-cabin.jpg) | ![水坑](public/scene-puddle.jpg) |
+| ![剧情](public/readme-s3.png) | ![小游戏](public/readme-s4.png) | ![切换](public/readme-s5.png) |
 
 ---
 
@@ -48,10 +48,10 @@
 
 ## NPC 形象
 
-| 角色 | 描述 |
-|:---|:---|
-| ![莉娅](public/lia.png) | **莉娅 (Lia)** — 你的引导者，陪伴你穿越每一次循环 |
-| ![盖亚](public/gaia.png) | **盖亚 (Gaia)** — 星球意志，记忆碎片的守护者 |
+| 莉娅 (Lia) | 盖亚 (Gaia) |
+|:---:|:---:|
+| ![莉娅](public/readme-npc1.png) | ![盖亚](public/readme-npc2.jpg) |
+| 你的引导者，陪伴你穿越每一次循环 | 星球意志，记忆碎片的守护者 |
 
 ---
 
