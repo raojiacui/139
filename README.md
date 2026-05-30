@@ -48,9 +48,9 @@
 
 ## non-player character 形象
 
-| 莉娅 (Lia) | 盖亚 (Gaia) |
+| 盖亚 (Gaia) | 莉娅 (Lia) |
 |:---:|:---:|
-| ![莉娅](public/readme-npc1.png) | ![盖亚](public/readme-npc2.jpg) |
+| ![盖亚](public/readme-npc1.png) | ![莉娅](public/readme-npc2.jpg) |
 | 你的引导者，陪伴你穿越每一次循环 | 星球意志，记忆碎片的守护者 |
 
 ---
