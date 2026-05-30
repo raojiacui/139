@@ -46,11 +46,11 @@
 
 ---
 
-## NPC 形象
+## non-player character 形象
 
 | 莉娅 (Lia) | 盖亚 (Gaia) |
 |:---:|:---:|
-| ![莉娅](public/readme-npc1.png) | ![盖亚](public/readme-npc2.jpg) |
+| ![盖亚](public/readme-npc1.png) | ![莉娅](public/readme-npc2.jpg) |
 | 你的引导者，陪伴你穿越每一次循环 | 星球意志，记忆碎片的守护者 |
 
 ---
@@ -93,9 +93,9 @@ npm run build
 
 ## 在线体验
 
-🔗 **https://gm.yangtzeu.work/**
+🔗 **https://let-him-survive.vercel.app/**
 
-建议使用手机浏览器或 Chrome 浏览器访问以获得最佳体验。
+建议使用手机浏览器横屏或 Chrome 浏览器访问以获得最佳体验。
 
 ---
 
