@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { fetchNpcFollowUp } from './services/aiService';
+import IntroAnimation from './components/IntroAnimation';
+import './components/IntroAnimation.css';
 import './App.css';
 
 const SAVE_KEY = 'infinite-loop-game-progress-v1';
@@ -882,6 +884,7 @@ function App() {
   const [musicOn, setMusicOn] = useState(true);
   const [showGuide, setShowGuide] = useState(false);
   const [showLandscapeNotice, setShowLandscapeNotice] = useState(false);
+  const [showIntroAnim, setShowIntroAnim] = useState(false);
   const audioRef = useRef(null);
   const isEnglish = language === 'en';
   const en = EN_UI;
@@ -1186,7 +1189,7 @@ function App() {
             <span>{isEnglish ? en.subtitle : '修复灾难地点，在一次次循环里找回真正需要被拯救的人。'}</span>
             <small className="landscape-tip">{isEnglish ? en.landscapeTip : '横屏体验更佳'}</small>
             <div className="start-actions">
-              <button onClick={() => { remember(); setIntroIndex(0); }}>{isEnglish ? en.start : '开始游戏'}</button>
+              <button onClick={() => { setShowIntroAnim(true); }}>{isEnglish ? en.start : '开始游戏'}</button>
               <button className="guide-btn" onClick={() => setShowGuide(true)}>{isEnglish ? en.guide : '游戏说明'}</button>
             </div>
           </section>
@@ -1208,6 +1211,16 @@ function App() {
                 </ol>
               </div>
             </section>
+          )}
+          {showIntroAnim && (
+            <IntroAnimation
+              language={language}
+              onComplete={() => {
+                remember();
+                setShowIntroAnim(false);
+                setScreen('map');
+              }}
+            />
           )}
         </main>
       );

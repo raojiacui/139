@@ -1,0 +1,378 @@
+/* Intro Animation - 3D Dive Entry
+   Style: ruins, starfield, cyclic loops, warm gold + deep space tones
+*/
+
+.intro-animation {
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  overflow: hidden;
+  background: #0a0908;
+  cursor: pointer;
+  animation: intro-fade-in 400ms ease both;
+  transition: opacity 500ms ease;
+}
+
+.intro-animation.intro-fade-out {
+  opacity: 0;
+}
+
+.intro-animation.intro-hidden {
+  display: none;
+}
+
+@keyframes intro-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Starfield canvas */
+.intro-starfield {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* Fog layers for depth */
+.intro-fog {
+  position: absolute;
+  inset: -10%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.intro-fog-layer1 {
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(80, 55, 30, 0.12), transparent 55%),
+    radial-gradient(ellipse at 30% 60%, rgba(40, 30, 50, 0.18), transparent 60%);
+  animation: intro-fog-drift 12s ease-in-out infinite alternate;
+}
+
+.intro-fog-layer2 {
+  background:
+    radial-gradient(ellipse at 70% 70%, rgba(20, 25, 45, 0.25), transparent 50%),
+    radial-gradient(ellipse at 40% 20%, rgba(60, 45, 25, 0.08), transparent 45%);
+  animation: intro-fog-drift 16s ease-in-out infinite alternate-reverse;
+}
+
+.intro-fog-layer3 {
+  background: linear-gradient(180deg, rgba(10, 8, 6, 0.35) 0%, transparent 35%, transparent 65%, rgba(5, 5, 8, 0.55) 100%);
+}
+
+@keyframes intro-fog-drift {
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(-3%, 2%) scale(1.06); }
+}
+
+/* 3D Scene container */
+.intro-3d-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  perspective-origin: 50% 40%;
+  transform-style: preserve-3d;
+}
+
+.intro-3d-world {
+  position: relative;
+  width: 120vmax;
+  height: 120vmax;
+  transform-style: preserve-3d;
+  transition: none;
+  will-change: transform;
+}
+
+/* River SVG */
+.intro-river-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.intro-river-path {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation: intro-river-flow 2s linear infinite;
+}
+
+.intro-river-shine {
+  stroke-linecap: round;
+  stroke-dasharray: 4 8;
+  animation: intro-river-shimmer 1.8s linear infinite;
+}
+
+@keyframes intro-river-flow {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -20; }
+}
+
+@keyframes intro-river-shimmer {
+  0% { stroke-dashoffset: 0; opacity: 0.4; }
+  50% { opacity: 0.8; }
+  100% { stroke-dashoffset: -24; opacity: 0.4; }
+}
+
+.intro-center-pulse {
+  animation: intro-center-pulse 1.8s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes intro-center-pulse {
+  0%, 100% { r: 12; opacity: 0.5; }
+  50% { r: 18; opacity: 0.9; }
+}
+
+/* Depth vignette inside 3D world */
+.intro-depth-vignette {
+  position: absolute;
+  inset: -20%;
+  background: radial-gradient(ellipse at 50% 55%, transparent 30%, rgba(10, 8, 6, 0.55) 70%, rgba(10, 8, 6, 0.85) 100%);
+  pointer-events: none;
+}
+
+/* Speed lines during dive */
+.intro-speed-lines {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(ellipse 2px 40px at 20% 30%, rgba(255,247,236,0.06), transparent),
+    radial-gradient(ellipse 1px 30px at 45% 25%, rgba(244,209,138,0.05), transparent),
+    radial-gradient(ellipse 2px 50px at 70% 35%, rgba(255,247,236,0.04), transparent),
+    radial-gradient(ellipse 1px 35px at 85% 50%, rgba(200,180,140,0.05), transparent),
+    radial-gradient(ellipse 2px 45px at 30% 60%, rgba(255,247,236,0.04), transparent),
+    radial-gradient(ellipse 1px 25px at 60% 70%, rgba(244,209,138,0.06), transparent);
+  animation: intro-speed-streak 0.6s linear infinite;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+@keyframes intro-speed-streak {
+  from { transform: translateY(-30px); opacity: 0; }
+  20% { opacity: 0.7; }
+  to { transform: translateY(30px); opacity: 0; }
+}
+
+/* Lens blur overlay (subtle) */
+.intro-lens-distortion {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  animation: intro-lens-pulse 3.8s ease both;
+}
+
+@keyframes intro-lens-pulse {
+  0% { opacity: 0; }
+  30% { opacity: 0; }
+  55% { opacity: 0.35; }
+  80% { opacity: 0.1; }
+  100% { opacity: 0; }
+}
+
+/* Chromatic aberration layer for text */
+.intro-chroma-layer {
+  position: absolute;
+  z-index: 8;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  --chroma-shift: 0px;
+}
+
+/* Title container with smoke */
+.intro-title-container {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.intro-title {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  padding: 0;
+  font-family: Georgia, "Times New Roman", "Microsoft YaHei", "PingFang SC", serif;
+  font-size: clamp(48px, 9vw, 110px);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #fff7ec;
+  text-shadow:
+    0 0 30px rgba(244, 209, 138, 0.5),
+    0 4px 40px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Chromatic aberration via text-shadow */
+.intro-title {
+  text-shadow:
+    calc(var(--chroma-shift) * -1) 0 2px rgba(255, 80, 60, 0.3),
+    var(--chroma-shift) 0 2px rgba(60, 140, 255, 0.3),
+    0 0 30px rgba(244, 209, 138, 0.5),
+    0 4px 40px rgba(0, 0, 0, 0.6);
+}
+
+.intro-char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(20px) scale(0.8);
+  filter: blur(12px);
+  transition: none;
+}
+
+.intro-char.intro-char-revealed {
+  animation: intro-char-reveal 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes intro-char-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(24px) scale(0.75);
+    filter: blur(14px);
+  }
+  40% {
+    opacity: 0.6;
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Smoke puff effects behind title */
+.intro-smoke-puff {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.intro-smoke-puff-1 {
+  width: 300px;
+  height: 120px;
+  left: -60px;
+  top: -20px;
+  background: radial-gradient(ellipse, rgba(244, 209, 138, 0.2) 0%, rgba(180, 140, 80, 0.08) 40%, transparent 70%);
+  animation: intro-smoke 2.2s ease-out 1.2s both;
+}
+
+.intro-smoke-puff-2 {
+  width: 260px;
+  height: 100px;
+  left: 40px;
+  top: 0px;
+  background: radial-gradient(ellipse, rgba(200, 180, 150, 0.15) 0%, rgba(150, 120, 80, 0.06) 45%, transparent 70%);
+  animation: intro-smoke 2.4s ease-out 1.5s both;
+}
+
+.intro-smoke-puff-3 {
+  width: 200px;
+  height: 80px;
+  left: 20px;
+  top: 10px;
+  background: radial-gradient(ellipse, rgba(255, 247, 236, 0.12) 0%, transparent 60%);
+  animation: intro-smoke 2s ease-out 1.8s both;
+}
+
+@keyframes intro-smoke {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) translateY(10px);
+    filter: blur(20px);
+  }
+  40% {
+    opacity: 1;
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.8) translateY(-20px);
+    filter: blur(30px);
+  }
+}
+
+/* Title glow behind text */
+.intro-title-glow {
+  position: absolute;
+  z-index: 1;
+  width: 120%;
+  height: 200%;
+  background: radial-gradient(ellipse, rgba(244, 209, 138, 0.18) 0%, rgba(244, 209, 138, 0.05) 40%, transparent 70%);
+  animation: intro-glow-pulse 3.8s ease-out 1s both;
+  pointer-events: none;
+}
+
+@keyframes intro-glow-pulse {
+  0% { opacity: 0; transform: scale(0.6); }
+  50% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0.6; transform: scale(1.1); }
+}
+
+/* Skip hint */
+.intro-skip-hint {
+  position: absolute;
+  z-index: 10;
+  left: 50%;
+  bottom: 8vh;
+  transform: translateX(-50%);
+  padding: 10px 22px;
+  border: 1px solid rgba(244, 209, 138, 0.3);
+  border-radius: 999px;
+  background: rgba(10, 8, 6, 0.5);
+  color: rgba(255, 247, 236, 0.65);
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  transform: translateX(-50%) translateY(10px);
+  transition: opacity 500ms ease, transform 500ms ease;
+  pointer-events: none;
+  animation: intro-skip-breathe 2.5s ease-in-out 1.2s infinite;
+}
+
+.intro-skip-hint.intro-skip-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+@keyframes intro-skip-breathe {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.9; }
+}
+
+/* Final vignette overlay */
+.intro-vignette {
+  position: absolute;
+  z-index: 9;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(5, 4, 3, 0.35) 80%, rgba(5, 4, 3, 0.65) 100%);
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .intro-river-path,
+  .intro-river-shine,
+  .intro-fog-layer1,
+  .intro-fog-layer2,
+  .intro-center-pulse,
+  .intro-speed-lines,
+  .intro-skip-hint,
+  .intro-smoke-puff,
+  .intro-title-glow {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  .intro-char.intro-char-revealed {
+    animation-duration: 300ms !important;
+  }
+}
